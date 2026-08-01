@@ -1,0 +1,82 @@
+{
+  "name": "naija-id",
+  "version": "0.1.0",
+  "description": "Zero-dependency validators and normalizers for Nigerian identifiers — phone (E.164), NIN, BVN, CAC (RC/BN/IT/LP) and TIN.",
+  "keywords": [
+    "nigeria",
+    "naija",
+    "validation",
+    "phone",
+    "msisdn",
+    "e164",
+    "nin",
+    "bvn",
+    "cac",
+    "rc-number",
+    "tin",
+    "identity"
+  ],
+  "license": "MIT",
+  "author": "Musa Musa",
+  "type": "module",
+  "sideEffects": false,
+  "engines": {
+    "node": ">=18"
+  },
+  "files": ["dist"],
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.js"
+      },
+      "require": {
+        "types": "./dist/index.d.cts",
+        "default": "./dist/index.cjs"
+      }
+    },
+    "./zod": {
+      "import": {
+        "types": "./dist/zod.d.ts",
+        "default": "./dist/zod.js"
+      },
+      "require": {
+        "types": "./dist/zod.d.cts",
+        "default": "./dist/zod.cjs"
+      }
+    },
+    "./package.json": "./package.json"
+  },
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsup --watch",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "typecheck": "tsc --noEmit",
+    "lint": "biome check .",
+    "format": "biome check --write .",
+    "check:package": "publint && attw --pack --profile node16",
+    "prepublishOnly": "pnpm build && pnpm test && pnpm check:package",
+    "release": "changeset publish"
+  },
+  "devDependencies": {
+    "@arethetypeswrong/cli": "^0.18.5",
+    "@biomejs/biome": "^1.9.4",
+    "@changesets/cli": "^2.27.9",
+    "publint": "^0.3.2",
+    "tsup": "^8.3.5",
+    "typescript": "^5.7.2",
+    "vitest": "^2.1.8",
+    "zod": "^3.24.0"
+  },
+  "peerDependencies": {
+    "zod": "^3.23.0 || ^4.0.0"
+  },
+  "peerDependenciesMeta": {
+    "zod": { "optional": true }
+  },
+  "packageManager": "pnpm@9.14.2"
+}
