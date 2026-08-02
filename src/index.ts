@@ -14,3 +14,5 @@ export { detect, type NaijaIdType } from "./detect.js";
 export { isValidNuban, nubanCheckDigit, parseNuban, type Nuban } from "./nuban.js";
 export { type Bank, BANKS, findBank, getBank } from "./data/banks.js";
 export { type NgOperator, OPERATOR_PREFIXES } from "./data/operators.js";
+export { generateBvn, generateNin, generateNuban, generatePhone, type Rng } from "./generate.js";
+export { mask } from "./mask.js";

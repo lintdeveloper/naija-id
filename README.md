@@ -64,6 +64,31 @@ findBank("gtbank")?.code;            // "000013"
 Pass a **3-digit legacy** or **6-digit NIBSS** bank code — accounts minted under the legacy scheme
 validate with the 3-digit code; newer ones use the 6-digit code.
 
+### Generate test data
+
+> ⚠️ **Synthetic — for tests, seeds and demos only.** Generated values are format-valid but **not
+> real**; NIN/BVN/phone have no reserved test range, so a value **may coincide with a real one**.
+> Never use generated data to impersonate anyone or against production/real systems.
+
+```ts
+import { generateNuban, generatePhone, generateNin, generateBvn } from "naija-id";
+
+generateNuban("011");               // 10-digit account with a valid check digit
+generatePhone({ operator: "MTN" }); // "+234803…"
+generateNin();                      // 11-digit
+generatePhone({ rng: mySeededRng }); // pass a seeded rng for deterministic tests
+```
+
+### Mask for logs / display
+
+```ts
+import { mask } from "naija-id";
+
+mask("12345678901");                // "********901"
+mask("08031234567", { reveal: 4 }); // "*******4567"
+mask("12345678-0001");              // "********-*001"  (separators preserved)
+```
+
 ### With Zod
 
 ```ts
