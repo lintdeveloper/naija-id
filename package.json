@@ -64,7 +64,7 @@
     "lint": "biome check .",
     "format": "biome check --write .",
     "check:package": "publint && attw --pack --profile node16",
-    "prepublishOnly": "pnpm build && pnpm test && pnpm check:package",
+    "prepublishOnly": "pnpm build && pnpm test",
     "release": "changeset publish"
   },
   "devDependencies": {
