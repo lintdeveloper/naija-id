@@ -17,4 +17,9 @@ describe("mask", () => {
     expect(mask("")).toBe("");
     expect(mask("ab", { reveal: 5 })).toBe("*b");
   });
+
+  it("handles nullish input and empty maskChar defensively", () => {
+    expect(mask(undefined as unknown as string)).toBe("");
+    expect(mask("12345678901", { maskChar: "" })).toBe("********901");
+  });
 });

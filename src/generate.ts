@@ -4,14 +4,22 @@ import { type PhoneFormat, formatPhone } from "./phone.js";
 
 /**
  * Random source in [0, 1). Defaults to `Math.random`. Pass a seeded RNG for deterministic output
- * in tests.
+ * in tests. Draws outside [0, 1) (or `NaN`) are clamped, so a misbehaving RNG can never produce
+ * malformed output.
  */
 export type Rng = () => number;
 
-const digit = (rng: Rng): string => String(Math.floor(rng() * 10));
+/** Clamp an RNG draw into [0, 1) so `Math.floor(unit(rng) * n)` is always a valid index. */
+const unit = (rng: Rng): number => {
+  const r = rng();
+  if (!(r >= 0)) return 0; // negatives and NaN
+  return r < 1 ? r : 1 - Number.EPSILON;
+};
+
+const digit = (rng: Rng): string => String(Math.floor(unit(rng) * 10));
 const digits = (n: number, rng: Rng): string =>
   Array.from({ length: n }, () => digit(rng)).join("");
-const pick = <T>(pool: readonly T[], rng: Rng): T => pool[Math.floor(rng() * pool.length)] as T;
+const pick = <T>(pool: readonly T[], rng: Rng): T => pool[Math.floor(unit(rng) * pool.length)] as T;
 
 const ALL_PREFIXES = Object.values(OPERATOR_PREFIXES).flat();
 
@@ -36,7 +44,7 @@ export function generateBvn(opts: { rng?: Rng } = {}): string {
 
 /**
  * Generate a **synthetic** NUBAN account number (10 digits) with a valid CBN check digit for the
- * given bank code (3-digit legacy or 6-digit NIBSS).
+ * given bank code (3-digit legacy or 6-digit NIBSS). Throws if the bank code is not 3 or 6 digits.
  *
  * ⚠️ Test data only. A valid check digit is **not** proof the account exists — never use against
  * production/real systems.
@@ -62,5 +70,10 @@ export function generatePhone(
   const rng = opts.rng ?? Math.random;
   const pool = opts.operator ? OPERATOR_PREFIXES[opts.operator] : ALL_PREFIXES;
   const local = `${pick(pool, rng)}${digits(7, rng)}`;
-  return formatPhone(local, opts.format ?? "e164") as string;
+  const formatted = formatPhone(local, opts.format ?? "e164");
+  if (formatted === null) {
+    // Unreachable while every prefix is a well-formed mobile prefix; guards against bad data.
+    throw new Error(`generatePhone: generated an invalid number "${local}"`);
+  }
+  return formatted;
 }
