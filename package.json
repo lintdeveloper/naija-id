@@ -1,6 +1,6 @@
 {
   "name": "naija-id",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Zero-dependency validators and normalizers for Nigerian identifiers — phone (E.164), NIN, BVN, CAC (RC/BN/IT/LP) and TIN.",
   "keywords": [
     "nigeria",
@@ -25,7 +25,9 @@
   "engines": {
     "node": ">=18"
   },
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "main": "./dist/index.cjs",
   "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
@@ -80,7 +82,9 @@
     "zod": "^3.23.0 || ^4.0.0"
   },
   "peerDependenciesMeta": {
-    "zod": { "optional": true }
+    "zod": {
+      "optional": true
+    }
   },
   "packageManager": "pnpm@9.14.2"
 }
