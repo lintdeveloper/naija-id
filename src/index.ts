@@ -11,4 +11,4 @@ export { isBvn, isNin, parseBvn, parseNin, type NationalId } from "./national-id
 export { type CacKind, type CacValue, isCac, parseCac } from "./cac.js";
 export { isTin, parseTin, type TinScheme, type TinValue } from "./tin.js";
 export { detect, type NaijaIdType } from "./detect.js";
-export { type NgOperator, OPERATOR_PREFIXES } from "./prefixes.js";
+export { type NgOperator, OPERATOR_PREFIXES } from "./data/operators.js";

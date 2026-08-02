@@ -1,4 +1,4 @@
-import { type NgOperator, PREFIX_TO_OPERATOR } from "./prefixes.js";
+import { type NgOperator, PREFIX_TO_OPERATOR } from "./data/operators.js";
 import { type Result, err, ok } from "./result.js";
 
 export type PhoneFormat = "e164" | "national" | "international";
