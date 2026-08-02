@@ -1,5 +1,9 @@
 # naija-id
 
+[![npm version](https://img.shields.io/npm/v/naija-id.svg)](https://www.npmjs.com/package/naija-id)
+[![CI](https://github.com/lintdeveloper/naija-id/actions/workflows/ci.yml/badge.svg)](https://github.com/lintdeveloper/naija-id/actions/workflows/ci.yml)
+[![license MIT](https://img.shields.io/npm/l/naija-id.svg)](./LICENSE)
+
 Modern, typed, zero-dependency validators for **Nigerian identifiers** — phone numbers,
 **NIN**, **BVN**, **CAC** (RC/BN/IT/LP) and **TIN** — with a consistent result type and an
 optional **Zod** integration.

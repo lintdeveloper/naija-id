@@ -20,14 +20,18 @@
   ],
   "license": "MIT",
   "author": "Musa Musa",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lintdeveloper/naija-id.git"
+  },
+  "homepage": "https://github.com/lintdeveloper/naija-id#readme",
+  "bugs": "https://github.com/lintdeveloper/naija-id/issues",
   "type": "module",
   "sideEffects": false,
   "engines": {
     "node": ">=18"
   },
-  "files": [
-    "dist"
-  ],
+  "files": ["dist"],
   "main": "./dist/index.cjs",
   "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
