@@ -9,4 +9,11 @@ describe("detect", () => {
     expect(detect("RC1234567")).toBe("cac");
     expect(detect("hello")).toBe("unknown");
   });
+
+  it("classifies the v0.4 identifiers", () => {
+    expect(detect("ABC123DE")).toBe("plate");
+    expect(detect("PEN123456789012")).toBe("rsa-pin");
+    expect(detect("A10000001")).toBe("passport");
+    expect(detect("FN63483AT78")).toBe("driver-license");
+  });
 });

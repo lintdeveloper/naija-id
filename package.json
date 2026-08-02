@@ -56,6 +56,16 @@
         "default": "./dist/zod.cjs"
       }
     },
+    "./standard": {
+      "import": {
+        "types": "./dist/standard.d.ts",
+        "default": "./dist/standard.js"
+      },
+      "require": {
+        "types": "./dist/standard.d.cts",
+        "default": "./dist/standard.cjs"
+      }
+    },
     "./package.json": "./package.json"
   },
   "scripts": {

@@ -1,6 +1,17 @@
 import { describe, expect, it } from "vitest";
 import { z } from "zod";
-import { bvn, cac, ngPhone, nin, nuban, tin } from "./zod.js";
+import {
+  bvn,
+  cac,
+  driverLicense,
+  ngPhone,
+  nin,
+  nuban,
+  passport,
+  plate,
+  rsaPin,
+  tin,
+} from "./zod.js";
 
 describe("zod schemas", () => {
   it("validate within a z.object", () => {
@@ -10,6 +21,10 @@ describe("zod schemas", () => {
       bvn: bvn(),
       cac: cac(),
       tin: tin(),
+      plate: plate(),
+      passport: passport(),
+      driverLicense: driverLicense(),
+      rsaPin: rsaPin(),
     });
     const parsed = schema.safeParse({
       phone: "08031234567",
@@ -17,6 +32,10 @@ describe("zod schemas", () => {
       bvn: "22345678901",
       cac: "RC1234567",
       tin: "1234567890",
+      plate: "ABC123DE",
+      passport: "A10000001",
+      driverLicense: "FN63483AT78",
+      rsaPin: "PEN123456789012",
     });
     expect(parsed.success).toBe(true);
   });
@@ -25,6 +44,8 @@ describe("zod schemas", () => {
     expect(ngPhone().safeParse("bad").success).toBe(false);
     expect(nin().safeParse("123").success).toBe(false);
     expect(cac().safeParse("!!!").success).toBe(false);
+    expect(plate().safeParse("AB12").success).toBe(false);
+    expect(rsaPin().safeParse("PEN1").success).toBe(false);
   });
 
   it("validates NUBAN against a bank code", () => {
