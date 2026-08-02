@@ -45,6 +45,21 @@ parseTin("12345678-0001");                    // { valid: true, value: { scheme:
 detect("08031234567");                        // "phone"  ("nin-or-bvn" | "cac" | "tin" | "unknown")
 ```
 
+### NUBAN (real checksum) + bank codes
+
+Unlike NIN/BVN, Nigerian account numbers carry a **CBN check digit**, so this is true validation:
+
+```ts
+import { isValidNuban, parseNuban, getBank, findBank } from "naija-id";
+
+isValidNuban("0000000017", "011");   // true — check digit verified against the bank code
+getBank("000016")?.name;             // "First Bank of Nigeria"
+findBank("gtbank")?.code;            // "000013"
+```
+
+Pass a **3-digit legacy** or **6-digit NIBSS** bank code — accounts minted under the legacy scheme
+validate with the 3-digit code; newer ones use the 6-digit code.
+
 ### With Zod
 
 ```ts

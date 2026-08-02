@@ -14,6 +14,8 @@
     "cac",
     "rc-number",
     "tin",
+    "nuban",
+    "bank-code",
     "identity"
   ],
   "license": "MIT",

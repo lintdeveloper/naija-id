@@ -1,6 +1,7 @@
 import { z } from "zod";
 import { isCac } from "./cac.js";
 import { isBvn, isNin } from "./national-id.js";
+import { isValidNuban } from "./nuban.js";
 import { isPhone } from "./phone.js";
 import { isTin } from "./tin.js";
 
@@ -14,3 +15,5 @@ export const nin = () => z.string().refine(isNin, "Invalid NIN — expected 11 d
 export const bvn = () => z.string().refine(isBvn, "Invalid BVN — expected 11 digits");
 export const cac = () => z.string().refine(isCac, "Invalid CAC registration number");
 export const tin = () => z.string().refine(isTin, "Invalid TIN");
+export const nuban = (bankCode: string) =>
+  z.string().refine((value) => isValidNuban(value, bankCode), "Invalid NUBAN for the given bank");
