@@ -11,7 +11,7 @@ Add four new identifiers (exported from the main entry, the Zod subpath, and `de
 
 - `parsePlate` / `isPlate` — vehicle plate `ABC-123DE` (LGA + serial + suffix)
 - `parseRsaPin` / `isRsaPin` — PENCOM RSA PIN (`PEN` + 12 digits)
-- `parsePassport` / `isPassport` — international passport (structural, `A` + 8 digits)
+- `parsePassport` / `isPassport` — international passport (structural, 9 chars: a letter + 8 digits, or 2 letters + 7)
 - `parseDriverLicense` / `isDriverLicense` — FRSC driver's licence (structural)
 
 Passport and driver's licence are documented as **structural** checks (shape only) because their

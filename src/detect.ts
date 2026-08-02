@@ -20,16 +20,18 @@ export type NaijaIdType =
 
 /**
  * Best-effort type guess, ordered most-specific-first. Note: NIN and BVN are indistinguishable
- * (both 11 digits), and bare numbers can be ambiguous with CAC — treat the result as a hint.
+ * (both 11 digits); bare numbers can be ambiguous with CAC; and a CAC like `RC1234567` also fits
+ * the 2-letter passport shape, so CAC/TIN/NIN are matched before the more generic passport check.
+ * Treat the result as a hint.
  */
 export function detect(input: string): NaijaIdType {
   if (isPhone(input)) return "phone";
   if (isRsaPin(input)) return "rsa-pin";
   if (isPlate(input)) return "plate";
   if (isDriverLicense(input)) return "driver-license";
-  if (isPassport(input)) return "passport";
   if (isTin(input)) return "tin";
   if (isNin(input)) return "nin-or-bvn";
   if (isCac(input)) return "cac";
+  if (isPassport(input)) return "passport";
   return "unknown";
 }

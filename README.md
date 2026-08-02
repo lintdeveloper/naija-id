@@ -72,7 +72,7 @@ import { parsePlate, isRsaPin, isPassport, isDriverLicense } from "naija-id";
 
 parsePlate("ABC-123DE");     // { valid: true, value: { lga: "ABC", serial: "123", suffix: "DE", normalized: "ABC123DE" } }
 isRsaPin("PEN123456789012"); // true  (PENCOM RSA PIN: "PEN" + 12 digits)
-isPassport("A10000001");     // true  (structural — a letter + 8 digits)
+isPassport("A10000001");     // true  (structural — 9 chars: a letter + 8 digits, or 2 letters + 7)
 isDriverLicense("FN63483AT78"); // true  (structural — FRSC shape)
 ```
 
