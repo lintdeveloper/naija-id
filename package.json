@@ -1,6 +1,6 @@
 {
   "name": "naija-id",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "description": "Zero-dependency validators and normalizers for Nigerian identifiers — phone (E.164), NIN, BVN, CAC (RC/BN/IT/LP) and TIN.",
   "keywords": [
     "nigeria",
