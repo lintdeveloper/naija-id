@@ -5,8 +5,9 @@
 [![license MIT](https://img.shields.io/npm/l/naija-id.svg)](./LICENSE)
 
 Modern, typed, zero-dependency validators for **Nigerian identifiers** — phone numbers,
-**NIN**, **BVN**, **CAC** (RC/BN/IT/LP) and **TIN** — with a consistent result type and an
-optional **Zod** integration.
+**NIN**, **BVN**, **CAC** (RC/BN/IT/LP), **TIN**, **NUBAN**, vehicle **plates**, **passport**,
+**driver's licence** and PENCOM **RSA PIN** — with a consistent result type, an optional **Zod**
+integration and zero-dependency **Standard Schema** support (Zod v4 / Valibot / ArkType / RHF / tRPC).
 
 > **Scope:** this library validates **format** and **normalizes** — it does *not* confirm an
 > identifier is real/registered. There are no public checksums for these IDs, so true
@@ -46,7 +47,7 @@ isNin("12345678901");                         // true (11 digits — format only
 parseCac("RC 1234567");                       // { valid: true, value: { kind: "RC", number: "1234567", normalized: "RC1234567" } }
 parseTin("12345678-0001");                    // { valid: true, value: { scheme: "FIRS", normalized: "12345678-0001" } }
 
-detect("08031234567");                        // "phone"  ("nin-or-bvn" | "cac" | "tin" | "unknown")
+detect("08031234567");                        // "phone" | "nin-or-bvn" | "cac" | "tin" | "plate" | "passport" | "driver-license" | "rsa-pin" | "unknown"
 ```
 
 ### NUBAN (real checksum) + bank codes
@@ -63,6 +64,20 @@ findBank("gtbank")?.code;            // "000013"
 
 Pass a **3-digit legacy** or **6-digit NIBSS** bank code — accounts minted under the legacy scheme
 validate with the 3-digit code; newer ones use the 6-digit code.
+
+### More identifiers
+
+```ts
+import { parsePlate, isRsaPin, isPassport, isDriverLicense } from "naija-id";
+
+parsePlate("ABC-123DE");     // { valid: true, value: { lga: "ABC", serial: "123", suffix: "DE", normalized: "ABC123DE" } }
+isRsaPin("PEN123456789012"); // true  (PENCOM RSA PIN: "PEN" + 12 digits)
+isPassport("A10000001");     // true  (structural — 9 chars: a letter + 8 digits, or 2 letters + 7)
+isDriverLicense("FN63483AT78"); // true  (structural — FRSC shape)
+```
+
+Passport and driver's licence are **structural** checks only (shape, not existence) — their formats
+aren't publicly standardised, so a pass is a hint, not verification.
 
 ### Generate test data
 
@@ -103,6 +118,21 @@ const Applicant = z.object({
 Applicant.safeParse({ phone: "08031234567", nin: "12345678901" }); // { success: true, data: ... }
 ```
 
+### With Standard Schema (Zod v4 / Valibot / ArkType / RHF / tRPC)
+
+The `naija-id/standard` subpath has **zero dependencies** and implements
+[Standard Schema](https://standardschema.dev), so it drops into anything that speaks the spec —
+React Hook Form, tRPC, TanStack Form — and interops with Zod v4, Valibot and ArkType by import
+alone. On success each schema outputs the parsed/normalized value.
+
+```ts
+import { ngPhone, nin, plate } from "naija-id/standard";
+
+// e.g. with React Hook Form: useForm({ resolver: standardSchemaResolver(ngPhone()) })
+const result = ngPhone()["~standard"].validate("08031234567");
+// { value: { e164: "+2348031234567", ... } }  |  { issues: [{ message }] }
+```
+
 ## Notes
 
 - **Phone:** validity is the general mobile shape (`+234`/`0` + a 10-digit number starting 7/8/9).
@@ -111,6 +141,8 @@ Applicant.safeParse({ phone: "08031234567", nin: "12345678901" }); // { success:
   `originalOperator`. (9mobile rebranded to **T2 Mobile** in 2025.)
 - **NIN / BVN:** both are exactly 11 numeric digits and indistinguishable by shape.
 - **CAC / TIN:** formats are variable/evolving; validation is structural only.
+- **Passport / driver's licence:** structural only — the formats aren't publicly standardised, so
+  these check shape, not existence. **Plate** and **RSA PIN** have well-defined formats.
 
 ## License
 

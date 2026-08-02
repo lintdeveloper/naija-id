@@ -11,6 +11,10 @@ export { isBvn, isNin, parseBvn, parseNin, type NationalId } from "./national-id
 export { type CacKind, type CacValue, isCac, parseCac } from "./cac.js";
 export { isTin, parseTin, type TinScheme, type TinValue } from "./tin.js";
 export { detect, type NaijaIdType } from "./detect.js";
+export { type Plate, isPlate, parsePlate } from "./plate.js";
+export { type Passport, isPassport, parsePassport } from "./passport.js";
+export { type DriverLicense, isDriverLicense, parseDriverLicense } from "./driver-license.js";
+export { type RsaPin, isRsaPin, parseRsaPin } from "./rsa-pin.js";
 export { isValidNuban, nubanCheckDigit, parseNuban, type Nuban } from "./nuban.js";
 export { type Bank, BANKS, findBank, getBank } from "./data/banks.js";
 export { type NgOperator, OPERATOR_PREFIXES } from "./data/operators.js";
