@@ -31,9 +31,7 @@
   "engines": {
     "node": ">=18"
   },
-  "files": [
-    "dist"
-  ],
+  "files": ["dist"],
   "main": "./dist/index.cjs",
   "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
@@ -71,7 +69,8 @@
     "format": "biome check --write .",
     "check:package": "publint && attw --pack --profile node16",
     "prepublishOnly": "pnpm build && pnpm test",
-    "release": "changeset publish"
+    "release": "changeset publish",
+    "ci:version": "changeset version && biome format --write package.json"
   },
   "devDependencies": {
     "@arethetypeswrong/cli": "^0.18.5",
