@@ -18,7 +18,11 @@ describe("operator prefixes", () => {
     // keep while the 4-digit parent is unallocated. If a parent ever gets allocated, revisit
     // whether the narrower entry is still needed.
     for (const prefix of ALL.filter((p) => p.length === 5)) {
-      expect(PREFIX_TO_OPERATOR[prefix.slice(0, 4)]).toBeUndefined();
+      const parent = prefix.slice(0, 4);
+      expect(
+        PREFIX_TO_OPERATOR[parent],
+        `${parent} is now allocated, so the narrower ${prefix} entry may be redundant`,
+      ).toBeUndefined();
     }
   });
 });

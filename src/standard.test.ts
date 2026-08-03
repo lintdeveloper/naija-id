@@ -58,7 +58,7 @@ describe("standard schema", () => {
     if ("value" in v) expect(v.value.normalized).toBe("AB012345678910YZ");
 
     const t = validateSync(taxId(), "1234 5678 90123");
-    if ("value" in t) expect(t.value.value).toBe("1234567890123");
+    if ("value" in t) expect(t.value.normalized).toBe("1234567890123");
   });
 
   it("returns issues on failure and for non-strings", () => {

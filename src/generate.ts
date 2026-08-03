@@ -23,7 +23,7 @@ const pick = <T>(pool: readonly T[], rng: Rng): T => pool[Math.floor(unit(rng) *
 
 const ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 const letters = (n: number, rng: Rng): string =>
-  Array.from({ length: n }, () => ALPHABET[Math.floor(unit(rng) * ALPHABET.length)] as string).join(
+  Array.from({ length: n }, () => ALPHABET.charAt(Math.floor(unit(rng) * ALPHABET.length))).join(
     "",
   );
 
@@ -96,7 +96,7 @@ export function generatePhone(
 ): string {
   const rng = opts.rng ?? Math.random;
   const pool = opts.operator ? OPERATOR_PREFIXES[opts.operator] : ALL_PREFIXES;
-  // Blocks are 4 or 5 digits wide (MTN's ex-Visafone 07025/07026); pad to a 11-digit local number.
+  // Blocks are 4 or 5 digits wide (MTN's ex-Visafone 07025/07026); pad to an 11-digit local number.
   const prefix = pick(pool, rng);
   const local = `${prefix}${digits(11 - prefix.length, rng)}`;
   const formatted = formatPhone(local, opts.format ?? "e164");

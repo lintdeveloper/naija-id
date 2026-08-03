@@ -6,7 +6,7 @@ describe("tax-id", () => {
   it("accepts 13 digits, with or without spacing", () => {
     const result = parseTaxId("1234567890123");
     expect(result.valid).toBe(true);
-    if (result.valid) expect(result.value).toEqual({ value: "1234567890123" });
+    if (result.valid) expect(result.value).toEqual({ normalized: "1234567890123" });
 
     expect(isTaxId("1234 5678 90123")).toBe(true);
   });

@@ -20,8 +20,9 @@ describe("banks", () => {
     expect(getBank("058")?.slug).toBe("gtbank");
     expect(getBank("044")?.slug).toBe("access");
     expect(getBank("999")).toBeUndefined();
-    // The 6-digit lookup still wins for institutions that have both.
+    // Both widths resolve to the same record, so either code round-trips to the other.
     expect(getBank("000016")?.legacyCode).toBe("011");
+    expect(getBank("011")?.code).toBe("000016");
   });
 
   it("has well-formed, unique legacy codes where present", () => {

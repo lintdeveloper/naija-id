@@ -21,9 +21,15 @@ export interface Bank {
  *
  * Sources: community-maintained CBN/NIBSS lists — 3-digit codes cross-checked against
  * https://github.com/tomiiide/nigerian-banks (banks.json) and
- * https://github.com/Zifah/Nigeria-Bank-Account-NUBAN-Algorithm. Keep updated as institutions
- * change. Defunct/merged entities (e.g. Diamond `063`, Heritage `030`, Skye — now Polaris `076`)
- * are intentionally omitted.
+ * https://github.com/Zifah/Nigeria-Bank-Account-NUBAN-Algorithm. The CBN NUBAN specification PDF is
+ * not machine-fetchable, so these are community-sourced: **verify a `legacyCode` before relying on
+ * it for a production migration.** A good independent check is a branch sort code — the first three
+ * digits of a bank's 9-digit sort code are its 3-digit code (this is how Stanbic IBTC was resolved
+ * to `221`; `031` belonged to pre-merger Stanbic Bank Nigeria).
+ *
+ * Keep updated as institutions change. Defunct/merged entities are omitted as separate entries —
+ * Diamond `063` and Heritage `030` are gone entirely, while Skye's `076` is carried by Polaris,
+ * which absorbed it, so legacy Skye accounts still validate.
  *
  * This dataset is a convenience; NUBAN validation itself only needs a bank code passed to
  * `isValidNuban`.

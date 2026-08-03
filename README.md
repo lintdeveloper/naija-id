@@ -80,9 +80,9 @@ between two leading and two trailing letters.
 ```ts
 import { isVnin, parseVnin, formatVnin } from "naija-id";
 
-isVnin("JZ426633988976CH");                        // true
-parseVnin("AB-0123-4567-8910-YZ").value.normalized; // "AB012345678910YZ" (hyphens are display-only)
-formatVnin("JZ426633988976CH", "grouped");          // "JZ-4266-3398-8976-CH"
+isVnin("JZ426633988976CH");                // true
+parseVnin("AB-0123-4567-8910-YZ");         // { valid: true, value: { normalized: "AB012345678910YZ" } }
+formatVnin("JZ426633988976CH", "grouped"); // "JZ-4266-3398-8976-CH"
 ```
 
 > A format-valid vNIN may still be unusable: tokens **expire after 72 hours** and are scoped to the

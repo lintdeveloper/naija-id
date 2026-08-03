@@ -1,8 +1,8 @@
 import { type Result, err, ok } from "./result.js";
 
 export interface TaxId {
-  /** The 13 digits, whitespace stripped. */
-  value: string;
+  /** Canonical form: the 13 digits, whitespace stripped. */
+  normalized: string;
 }
 
 /**
@@ -18,10 +18,10 @@ export interface TaxId {
  * for the legacy FIRS/JTB formats.
  */
 export function parseTaxId(input: string): Result<TaxId> {
-  const value = (input ?? "").replace(/\s/g, "");
-  if (!/^\d+$/.test(value)) return err("INVALID_FORMAT", "Tax ID must contain digits only");
-  if (value.length !== 13) return err("WRONG_LENGTH", "Tax ID must be exactly 13 digits");
-  return ok({ value });
+  const normalized = (input ?? "").replace(/\s/g, "");
+  if (!/^\d+$/.test(normalized)) return err("INVALID_FORMAT", "Tax ID must contain digits only");
+  if (normalized.length !== 13) return err("WRONG_LENGTH", "Tax ID must be exactly 13 digits");
+  return ok({ normalized });
 }
 
 export const isTaxId = (input: string): boolean => parseTaxId(input).valid;
@@ -29,5 +29,5 @@ export const isTaxId = (input: string): boolean => parseTaxId(input).valid;
 /** Canonical Tax ID form: the plain 13 digits. `null` when the input is not a valid Tax ID. */
 export function formatTaxId(input: string): string | null {
   const result = parseTaxId(input);
-  return result.valid ? result.value.value : null;
+  return result.valid ? result.value.normalized : null;
 }
