@@ -3,35 +3,52 @@ export interface Bank {
   slug: string;
   /** 6-digit NIBSS institution code. */
   code: string;
+  /**
+   * 3-digit CBN clearing code, where the institution has one. Accounts minted under the legacy
+   * scheme validate against THIS code rather than the 6-digit one, so pass it to `isValidNuban`
+   * when checking an older account number.
+   *
+   * Absent for institutions that never had one — banks licensed after the legacy clearing era
+   * (Titan Trust, Globus, Lotus, Parallex, PremiumTrust, TAJ, Rand Merchant) and MFBs/PSBs
+   * (Kuda, OPay, PalmPay, Moniepoint).
+   */
+  legacyCode?: string;
 }
 
 /**
- * Nigerian bank / OFI institution codes (6-digit NIBSS). Source: community-maintained CBN/NIBSS
- * lists — keep updated as institutions change. Defunct/merged entities (e.g. Diamond, Heritage,
- * Skye) are intentionally omitted. This dataset is a convenience; NUBAN validation itself only
- * needs a bank code passed to `isValidNuban`.
+ * Nigerian bank / OFI institution codes. `code` is the 6-digit NIBSS institution code; `legacyCode`
+ * is the 3-digit CBN clearing code where one exists.
+ *
+ * Sources: community-maintained CBN/NIBSS lists — 3-digit codes cross-checked against
+ * https://github.com/tomiiide/nigerian-banks (banks.json) and
+ * https://github.com/Zifah/Nigeria-Bank-Account-NUBAN-Algorithm. Keep updated as institutions
+ * change. Defunct/merged entities (e.g. Diamond `063`, Heritage `030`, Skye — now Polaris `076`)
+ * are intentionally omitted.
+ *
+ * This dataset is a convenience; NUBAN validation itself only needs a bank code passed to
+ * `isValidNuban`.
  */
 export const BANKS: readonly Bank[] = [
-  { name: "Sterling Bank", slug: "sterling", code: "000001" },
-  { name: "Keystone Bank", slug: "keystone", code: "000002" },
-  { name: "FCMB", slug: "fcmb", code: "000003" },
-  { name: "United Bank for Africa", slug: "uba", code: "000004" },
-  { name: "Jaiz Bank", slug: "jaiz", code: "000006" },
-  { name: "Fidelity Bank", slug: "fidelity", code: "000007" },
-  { name: "Polaris Bank", slug: "polaris", code: "000008" },
-  { name: "Citibank Nigeria", slug: "citi", code: "000009" },
-  { name: "Ecobank Nigeria", slug: "ecobank", code: "000010" },
-  { name: "Unity Bank", slug: "unity", code: "000011" },
-  { name: "Stanbic IBTC Bank", slug: "stanbic-ibtc", code: "000012" },
-  { name: "GTBank", slug: "gtbank", code: "000013" },
-  { name: "Access Bank", slug: "access", code: "000014" },
-  { name: "Zenith Bank", slug: "zenith", code: "000015" },
-  { name: "First Bank of Nigeria", slug: "first-bank", code: "000016" },
-  { name: "Wema Bank", slug: "wema", code: "000017" },
-  { name: "Union Bank", slug: "union", code: "000018" },
-  { name: "Standard Chartered", slug: "standard-chartered", code: "000021" },
-  { name: "SunTrust Bank", slug: "suntrust", code: "000022" },
-  { name: "Providus Bank", slug: "providus", code: "000023" },
+  { name: "Sterling Bank", slug: "sterling", code: "000001", legacyCode: "232" },
+  { name: "Keystone Bank", slug: "keystone", code: "000002", legacyCode: "082" },
+  { name: "FCMB", slug: "fcmb", code: "000003", legacyCode: "214" },
+  { name: "United Bank for Africa", slug: "uba", code: "000004", legacyCode: "033" },
+  { name: "Jaiz Bank", slug: "jaiz", code: "000006", legacyCode: "301" },
+  { name: "Fidelity Bank", slug: "fidelity", code: "000007", legacyCode: "070" },
+  { name: "Polaris Bank", slug: "polaris", code: "000008", legacyCode: "076" },
+  { name: "Citibank Nigeria", slug: "citi", code: "000009", legacyCode: "023" },
+  { name: "Ecobank Nigeria", slug: "ecobank", code: "000010", legacyCode: "050" },
+  { name: "Unity Bank", slug: "unity", code: "000011", legacyCode: "215" },
+  { name: "Stanbic IBTC Bank", slug: "stanbic-ibtc", code: "000012", legacyCode: "221" },
+  { name: "GTBank", slug: "gtbank", code: "000013", legacyCode: "058" },
+  { name: "Access Bank", slug: "access", code: "000014", legacyCode: "044" },
+  { name: "Zenith Bank", slug: "zenith", code: "000015", legacyCode: "057" },
+  { name: "First Bank of Nigeria", slug: "first-bank", code: "000016", legacyCode: "011" },
+  { name: "Wema Bank", slug: "wema", code: "000017", legacyCode: "035" },
+  { name: "Union Bank", slug: "union", code: "000018", legacyCode: "032" },
+  { name: "Standard Chartered", slug: "standard-chartered", code: "000021", legacyCode: "068" },
+  { name: "SunTrust Bank", slug: "suntrust", code: "000022", legacyCode: "100" },
+  { name: "Providus Bank", slug: "providus", code: "000023", legacyCode: "101" },
   { name: "Rand Merchant Bank", slug: "rand-merchant", code: "000024" },
   { name: "Titan Trust Bank", slug: "titan-trust", code: "000025" },
   { name: "TAJBank", slug: "taj", code: "000026" },
@@ -47,10 +64,16 @@ export const BANKS: readonly Bank[] = [
 
 const BY_CODE = new Map(BANKS.map((bank) => [bank.code, bank]));
 const BY_SLUG = new Map(BANKS.map((bank) => [bank.slug, bank]));
+const BY_LEGACY_CODE = new Map(
+  BANKS.flatMap((bank) =>
+    bank.legacyCode === undefined ? [] : [[bank.legacyCode, bank] as const],
+  ),
+);
 
-/** Look up a bank by its NIBSS code. */
+/** Look up a bank by its 6-digit NIBSS code or its 3-digit legacy CBN clearing code. */
 export function getBank(code: string): Bank | undefined {
-  return BY_CODE.get((code ?? "").replace(/\s/g, ""));
+  const key = (code ?? "").replace(/\s/g, "");
+  return BY_CODE.get(key) ?? BY_LEGACY_CODE.get(key);
 }
 
 /** Look up a bank by slug or exact (case-insensitive) name. */

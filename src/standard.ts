@@ -8,7 +8,9 @@ import { type Plate, parsePlate } from "./plate.js";
 import type { Result } from "./result.js";
 import { type RsaPin, parseRsaPin } from "./rsa-pin.js";
 import type { StandardSchemaV1 } from "./standard-schema.js";
+import { type TaxId, parseTaxId } from "./tax-id.js";
 import { type TinValue, parseTin } from "./tin.js";
+import { type Vnin, parseVnin } from "./vnin.js";
 
 /**
  * Standard Schema factories for Nigerian identifiers (subpath: `naija-id/standard`).
@@ -38,6 +40,8 @@ export const nin = (): StandardSchemaV1<string, NationalId> => schema(parseNin);
 export const bvn = (): StandardSchemaV1<string, NationalId> => schema(parseBvn);
 export const cac = (): StandardSchemaV1<string, CacValue> => schema(parseCac);
 export const tin = (): StandardSchemaV1<string, TinValue> => schema(parseTin);
+export const taxId = (): StandardSchemaV1<string, TaxId> => schema(parseTaxId);
+export const vnin = (): StandardSchemaV1<string, Vnin> => schema(parseVnin);
 export const plate = (): StandardSchemaV1<string, Plate> => schema(parsePlate);
 export const passport = (): StandardSchemaV1<string, Passport> => schema(parsePassport);
 export const driverLicense = (): StandardSchemaV1<string, DriverLicense> =>

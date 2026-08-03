@@ -34,6 +34,27 @@ describe("phone", () => {
     expect(phoneOperator("08091234567")).toBe("T2");
   });
 
+  it("covers the prefixes added in the NCC data refresh", () => {
+    expect(phoneOperator("07041234567")).toBe("MTN"); // ex-Visafone
+    expect(phoneOperator("07071234567")).toBe("MTN"); // ex-ZoomMobile
+    expect(phoneOperator("09041234567")).toBe("Airtel");
+    expect(phoneOperator("09111234567")).toBe("Airtel");
+    expect(phoneOperator("08011234567")).toBe("MAFAB");
+    expect(phoneOperator("08041234567")).toBe("Ntel");
+  });
+
+  it("prefers a 5-digit block over the 4-digit fallback", () => {
+    // 07025/07026 are MTN (ex-Visafone); the wider 0702 block belongs to no single operator.
+    expect(phoneOperator("07025123456")).toBe("MTN");
+    expect(phoneOperator("07026123456")).toBe("MTN");
+    expect(phoneOperator("07021123456")).toBeUndefined();
+  });
+
+  it("leaves the operator undefined for an unallocated prefix", () => {
+    expect(phoneOperator("07091234567")).toBeUndefined(); // defunct Multi-Links, deliberately omitted
+    expect(isPhone("07091234567")).toBe(true); // still a structurally valid mobile number
+  });
+
   it("parses a full result", () => {
     const result = parsePhone("0803 123 4567");
     expect(result.valid).toBe(true);

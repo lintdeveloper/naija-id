@@ -31,6 +31,15 @@ function toNsn(input: string): string | null {
 
 const group = (nsn: string): string => `${nsn.slice(0, 3)} ${nsn.slice(3, 6)} ${nsn.slice(6)}`;
 
+/**
+ * Resolve the original operator from the local form. Tries the 5-digit block first, since MTN's
+ * ex-Visafone `07025`/`07026` sit inside an otherwise unallocated `0702`.
+ */
+function operatorFor(nsn: string): NgOperator | undefined {
+  const local = `0${nsn}`;
+  return PREFIX_TO_OPERATOR[local.slice(0, 5)] ?? PREFIX_TO_OPERATOR[local.slice(0, 4)];
+}
+
 export function parsePhone(input: string): Result<NgPhone> {
   const nsn = toNsn(input ?? "");
   if (nsn === null) return err("INVALID_FORMAT", "Not a valid Nigerian mobile number");
@@ -41,7 +50,7 @@ export function parsePhone(input: string): Result<NgPhone> {
     international: `+234 ${grouped}`,
     nsn,
     type: "mobile",
-    originalOperator: PREFIX_TO_OPERATOR[`0${nsn}`.slice(0, 4)],
+    originalOperator: operatorFor(nsn),
   });
 }
 
