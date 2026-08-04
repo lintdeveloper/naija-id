@@ -1,5 +1,6 @@
 import { isCac } from "./cac.js";
 import { isDriverLicense } from "./driver-license.js";
+import { isFixedLine } from "./fixed-line.js";
 import { isNin } from "./national-id.js";
 import { isPassport } from "./passport.js";
 import { isPhone } from "./phone.js";
@@ -11,6 +12,7 @@ import { isVnin } from "./vnin.js";
 
 export type NaijaIdType =
   | "phone"
+  | "fixed-line"
   | "nin-or-bvn"
   | "vnin"
   | "cac"
@@ -38,6 +40,11 @@ export function detect(input: string): NaijaIdType {
   if (isPlate(input)) return "plate";
   if (isDriverLicense(input)) return "driver-license";
   if (isTin(input)) return "tin";
+  // Before NIN, after TIN. A landline NSN starts with 2 so it never collides with a mobile, but an
+  // 11-digit "020…" landline IS a format-valid 11-digit NIN. Placed here, 0.09% of random NINs get
+  // read as a landline; placed after NIN, 100% of Lagos/Ibadan/Abuja landlines get read as a NIN.
+  // Kept after `isTin` so a trunk-less 10-digit "20…" still resolves to TIN as it always has.
+  if (isFixedLine(input)) return "fixed-line";
   if (isNin(input)) return "nin-or-bvn";
   if (isTaxId(input)) return "tax-id";
   if (isCac(input)) return "cac";

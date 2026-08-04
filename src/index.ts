@@ -8,6 +8,15 @@ export {
   type PhoneFormat,
 } from "./phone.js";
 export {
+  fixedLineArea,
+  formatFixedLine,
+  isFixedLine,
+  parseFixedLine,
+  type FixedLineFormat,
+  type NgFixedLine,
+} from "./fixed-line.js";
+export { AREA_CODES, getAreaCode, type NgAreaCode } from "./data/area-codes.js";
+export {
   formatBvn,
   formatNin,
   isBvn,
@@ -43,6 +52,7 @@ export { type NgOperator, OPERATOR_PREFIXES } from "./data/operators.js";
 export {
   generateBvn,
   generateCac,
+  generateFixedLine,
   generateDriverLicense,
   generateNin,
   generateNuban,

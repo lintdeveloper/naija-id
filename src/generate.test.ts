@@ -2,11 +2,13 @@ import { describe, expect, it } from "vitest";
 import { isCac } from "./cac.js";
 import { type NgOperator, OPERATOR_PREFIXES } from "./data/operators.js";
 import { isDriverLicense } from "./driver-license.js";
+import { isFixedLine } from "./fixed-line.js";
 import {
   type Rng,
   generateBvn,
   generateCac,
   generateDriverLicense,
+  generateFixedLine,
   generateNin,
   generateNuban,
   generatePassport,
@@ -51,6 +53,7 @@ const GENERATORS: ReadonlyArray<{
   { label: "taxId", generate: generateTaxId, isValid: isTaxId },
   { label: "vnin", generate: generateVnin, isValid: isVnin },
   { label: "phone", generate: generatePhone, isValid: isPhone },
+  { label: "fixedLine", generate: generateFixedLine, isValid: isFixedLine },
   { label: "plate", generate: generatePlate, isValid: isPlate },
   { label: "rsaPin", generate: generateRsaPin, isValid: isRsaPin },
   { label: "cac", generate: generateCac, isValid: isCac },
@@ -180,6 +183,16 @@ describe("generators", () => {
     expect(generatePlate({ rng: one })).toBe("ZZZ999ZZ");
     expect(isTaxId(generateTaxId({ rng: one }))).toBe(true);
     expect(isVnin(generateVnin({ rng: nan }))).toBe(true);
+  });
+
+  it("honours the fixed-line areaCode option and rejects unknown codes", () => {
+    for (const code of ["201", "01", "2084", "084"]) {
+      const generated = generateFixedLine({ areaCode: code });
+      expect(isFixedLine(generated), `${code}: ${generated}`).toBe(true);
+    }
+    expect(generateFixedLine({ areaCode: "201", rng: zero })).toBe("+2342010000000");
+    expect(generateFixedLine({ areaCode: "2084", rng: zero })).toBe("+2342084000000");
+    expect(() => generateFixedLine({ areaCode: "999" })).toThrow();
   });
 
   it("throws on a bad or missing bank code", () => {

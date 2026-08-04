@@ -1,6 +1,7 @@
 import { isCac } from "./cac.js";
 import type { NaijaIdType } from "./detect.js";
 import { isDriverLicense } from "./driver-license.js";
+import { isFixedLine } from "./fixed-line.js";
 import { mask } from "./mask.js";
 import { isNin } from "./national-id.js";
 import { isValidNuban } from "./nuban.js";
@@ -30,6 +31,7 @@ export const DEFAULT_REDACT_TYPES: readonly RedactType[] = [
   "rsa-pin",
   "driver-license",
   "plate",
+  "fixed-line",
 ];
 
 /**
@@ -298,6 +300,18 @@ const RECOGNIZERS: readonly Recognizer[] = [
     labelWords: PHONE_WORDS,
     labels: PHONE_LABELS,
     validate: (s) => isPhone(s),
+  },
+  {
+    type: "fixed-line",
+    evidence: "shape",
+    kind: "digit",
+    // 20 + 1 area digit + 7 subscriber (Lagos/Ibadan/Abuja), or 20 + 2 + 6 (everywhere else).
+    // Only the CURRENT form is anchored; the pre-2023 8-digit form is far too ambiguous to hunt for.
+    source: `(?:\\+?234${SEP}?|0)20(?:\\d${SEP}?\\d{3}${SEP}?\\d{4}|\\d{2}${SEP}?\\d{3}${SEP}?\\d{3})`,
+    join: true,
+    labelWords: "landline|fixed|office|tel|telephone|phone",
+    labels: label("landline|fixed|office|tel|telephone|phone"),
+    validate: (s) => isFixedLine(s),
   },
   {
     type: "rsa-pin",
@@ -665,6 +679,8 @@ const KEY_HINTS: ReadonlyArray<{ key: string; types: readonly RedactType[] }> = 
   { key: "tel", types: ["phone"] },
   { key: "gsm", types: ["phone"] },
   { key: "whatsapp", types: ["phone"] },
+  { key: "landline", types: ["fixed-line"] },
+  { key: "office phone", types: ["fixed-line", "phone"] },
   { key: "nuban", types: ["nuban"] },
   { key: "account number", types: ["nuban"] },
   { key: "acct", types: ["nuban"] },
@@ -680,6 +696,7 @@ const KEY_HINTS: ReadonlyArray<{ key: string; types: readonly RedactType[] }> = 
 
 const VALIDATORS: Record<RedactType, (s: string, bankCodes: readonly string[]) => boolean> = {
   phone: (s) => isPhone(s),
+  "fixed-line": (s) => isFixedLine(s),
   "nin-or-bvn": (s) => isNin(s),
   vnin: (s) => isVnin(s),
   cac: (s) => isCac(s),

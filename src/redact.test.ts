@@ -91,8 +91,8 @@ describe("redactText — must not mask", () => {
     ["RC1234567 registered", undefined],
     ["build 20240101-0001 done", undefined],
     ["batch 10045892-0003 shipped", undefined],
-    // Lagos landline: matches the phone anchor, then isPhone vetoes it (NSN starts 2).
-    ["Lagos office 0201 234 5678", undefined],
+    // Landlines used to belong here — they matched the phone anchor and isPhone vetoed them. They
+    // are now a redaction type of their own; see the "fixed-line" block below.
     // Ordinary log furniture.
     ["v1.2.3 built 2026-08-04T12:34:56Z port 8080 pid 12345 rss 1048576", undefined],
     ["4111 1111 1111 1111", undefined],
@@ -548,6 +548,32 @@ describe("redact — regressions", () => {
     const out = redactText(big, { exclude: [/traceId=\S+/g] });
     expect(Date.now() - started).toBeLessThan(1000);
     expect(out).toBe(big);
+  });
+});
+
+describe("redactText — fixed-line", () => {
+  it("masks landlines in the current form, in every notation", () => {
+    expect(redactText("Lagos office 0201 234 5678")).toBe("Lagos office **** *** *678");
+    expect(redactText("+234 201 234 5678")).toBe("+*** *** *** *678");
+    expect(redactText("PH desk 02084 123 456")).toBe("PH desk ***** *** 456");
+    expect(redact({ landline: "02012345678" }).landline).toBe("********678");
+  });
+
+  it("does not mask the pre-2023 8-digit form", () => {
+    // isFixedLine accepts it (with a trunk 0) and upgrades it, but the scanner deliberately does not
+    // hunt for it: a trunk-0 plus 8 digits is far too close to ordinary numbers in prose.
+    expect(redactText("old line 01 234 5678")).toBe("old line 01 234 5678");
+  });
+
+  it("leaves numeric log furniture alone", () => {
+    for (const safe of [
+      "port 8080 pid 12345 rss 1048576",
+      "v1.2.3 built 2026-08-04T12:34:56Z",
+      "seq 2012345678 ok", // no trunk 0, so not anchored
+      "ratio 0.201234 5678",
+    ]) {
+      expect(redactText(safe), safe).toBe(safe);
+    }
   });
 });
 
