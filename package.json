@@ -1,7 +1,7 @@
 {
   "name": "naija-id",
   "version": "0.5.1",
-  "description": "Zero-dependency validators, formatters and PII redaction for Nigerian identifiers — phone (E.164), NIN, vNIN, BVN, Tax ID, TIN, CAC, NUBAN, plate, passport, driver's licence and RSA PIN.",
+  "description": "Zero-dependency validators, formatters and PII redaction for Nigerian identifiers \u2014 phone (E.164), NIN, vNIN, BVN, Tax ID, TIN, CAC, NUBAN, plate, passport, driver's licence and RSA PIN.",
   "keywords": [
     "nigeria",
     "naija",
@@ -24,7 +24,22 @@
     "identity",
     "kyc",
     "pii",
-    "redaction"
+    "redaction",
+    "nigerian",
+    "validator",
+    "national-identity-number",
+    "bank-verification-number",
+    "virtual-nin",
+    "account-number",
+    "bank-account-validation",
+    "voters-card",
+    "vin",
+    "drivers-licence",
+    "fixed-line",
+    "landline",
+    "phone-validation",
+    "data-masking",
+    "log-redaction"
   ],
   "license": "MIT",
   "author": "Musa Musa",
