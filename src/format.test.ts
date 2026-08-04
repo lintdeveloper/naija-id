@@ -1,16 +1,16 @@
 import { describe, expect, it } from "vitest";
-import { formatCac, isCac } from "./cac.js";
-import { formatDriverLicense, isDriverLicense } from "./driver-license.js";
-import { formatFixedLine, isFixedLine } from "./fixed-line.js";
-import { formatBvn, formatNin, isBvn, isNin } from "./national-id.js";
-import { formatNuban, isValidNuban } from "./nuban.js";
-import { formatPassport, isPassport } from "./passport.js";
-import { formatPhone, isPhone } from "./phone.js";
-import { formatPlate, isPlate } from "./plate.js";
-import { formatRsaPin, isRsaPin } from "./rsa-pin.js";
-import { formatTaxId, isTaxId } from "./tax-id.js";
-import { formatTin, isTin } from "./tin.js";
-import { formatVnin, isVnin } from "./vnin.js";
+import { formatCac, isCac } from "./cac.ts";
+import { formatDriverLicense, isDriverLicense } from "./driver-license.ts";
+import { formatFixedLine, isFixedLine } from "./fixed-line.ts";
+import { formatBvn, formatNin, isBvn, isNin } from "./national-id.ts";
+import { formatNuban, isValidNuban } from "./nuban.ts";
+import { formatPassport, isPassport } from "./passport.ts";
+import { formatPhone, isPhone } from "./phone.ts";
+import { formatPlate, isPlate } from "./plate.ts";
+import { formatRsaPin, isRsaPin } from "./rsa-pin.ts";
+import { formatTaxId, isTaxId } from "./tax-id.ts";
+import { formatTin, isTin } from "./tin.ts";
+import { formatVnin, isVnin } from "./vnin.ts";
 
 /**
  * The formatter contract, enforced uniformly over every identifier and style: a messy-but-valid

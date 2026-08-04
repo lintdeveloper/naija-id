@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { isPassport, parsePassport } from "./passport.js";
+import { isPassport, parsePassport } from "./passport.ts";
 
 describe("passport", () => {
   it("accepts both 9-character forms", () => {

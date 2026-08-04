@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { detect } from "./detect.js";
+import { detect } from "./detect.ts";
 
 describe("detect", () => {
   it("classifies common inputs", () => {

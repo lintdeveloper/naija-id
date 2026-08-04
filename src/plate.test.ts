@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { isPlate, parsePlate } from "./plate.js";
+import { isPlate, parsePlate } from "./plate.ts";
 
 describe("plate", () => {
   it("parses and normalizes valid plates", () => {

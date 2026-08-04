@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { formatNuban, isValidNuban, nubanCheckDigit, parseNuban } from "./nuban.js";
+import { formatNuban, isValidNuban, nubanCheckDigit, parseNuban } from "./nuban.ts";
 
 describe("nuban", () => {
   it("computes the CBN check digit (3-digit legacy code)", () => {

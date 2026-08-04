@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { isCac, parseCac } from "./cac.js";
+import { isCac, parseCac } from "./cac.ts";
 
 describe("cac", () => {
   it("parses prefixed numbers", () => {

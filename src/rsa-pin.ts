@@ -1,4 +1,4 @@
-import { type Result, err, ok } from "./result.js";
+import { type Result, err, ok } from "./result.ts";
 
 export interface RsaPin {
   /** The 12-digit serial after the `PEN` prefix. */

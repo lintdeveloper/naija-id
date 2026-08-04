@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { OPERATOR_PREFIXES, PREFIX_TO_OPERATOR } from "./operators.js";
+import { OPERATOR_PREFIXES, PREFIX_TO_OPERATOR } from "./operators.ts";
 
 const ALL = Object.values(OPERATOR_PREFIXES).flat();
 

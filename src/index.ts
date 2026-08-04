@@ -1,4 +1,4 @@
-export type { NaijaIdError, NaijaIdErrorCode, Result } from "./result.js";
+export type { NaijaIdError, NaijaIdErrorCode, Result } from "./result.ts";
 export {
   formatPhone,
   isPhone,
@@ -6,7 +6,7 @@ export {
   phoneOperator,
   type NgPhone,
   type PhoneFormat,
-} from "./phone.js";
+} from "./phone.ts";
 export {
   fixedLineArea,
   formatFixedLine,
@@ -14,8 +14,8 @@ export {
   parseFixedLine,
   type FixedLineFormat,
   type NgFixedLine,
-} from "./fixed-line.js";
-export { AREA_CODES, getAreaCode, type NgAreaCode } from "./data/area-codes.js";
+} from "./fixed-line.ts";
+export { AREA_CODES, getAreaCode, type NgAreaCode } from "./data/area-codes.ts";
 export {
   formatBvn,
   formatNin,
@@ -24,21 +24,21 @@ export {
   parseBvn,
   parseNin,
   type NationalId,
-} from "./national-id.js";
-export { type CacFormat, type CacKind, type CacValue, formatCac, isCac, parseCac } from "./cac.js";
-export { formatTin, isTin, parseTin, type TinScheme, type TinValue } from "./tin.js";
-export { formatTaxId, isTaxId, parseTaxId, type TaxId } from "./tax-id.js";
-export { formatVnin, isVnin, parseVnin, type Vnin, type VninFormat } from "./vnin.js";
-export { detect, type NaijaIdType } from "./detect.js";
-export { type Plate, type PlateFormat, formatPlate, isPlate, parsePlate } from "./plate.js";
-export { type Passport, formatPassport, isPassport, parsePassport } from "./passport.js";
+} from "./national-id.ts";
+export { type CacFormat, type CacKind, type CacValue, formatCac, isCac, parseCac } from "./cac.ts";
+export { formatTin, isTin, parseTin, type TinScheme, type TinValue } from "./tin.ts";
+export { formatTaxId, isTaxId, parseTaxId, type TaxId } from "./tax-id.ts";
+export { formatVnin, isVnin, parseVnin, type Vnin, type VninFormat } from "./vnin.ts";
+export { detect, type NaijaIdType } from "./detect.ts";
+export { type Plate, type PlateFormat, formatPlate, isPlate, parsePlate } from "./plate.ts";
+export { type Passport, formatPassport, isPassport, parsePassport } from "./passport.ts";
 export {
   type DriverLicense,
   formatDriverLicense,
   isDriverLicense,
   parseDriverLicense,
-} from "./driver-license.js";
-export { type RsaPin, type RsaPinFormat, formatRsaPin, isRsaPin, parseRsaPin } from "./rsa-pin.js";
+} from "./driver-license.ts";
+export { type RsaPin, type RsaPinFormat, formatRsaPin, isRsaPin, parseRsaPin } from "./rsa-pin.ts";
 export {
   formatNuban,
   isValidNuban,
@@ -46,9 +46,9 @@ export {
   parseNuban,
   type Nuban,
   type NubanFormat,
-} from "./nuban.js";
-export { type Bank, BANKS, findBank, getBank } from "./data/banks.js";
-export { type NgOperator, OPERATOR_PREFIXES } from "./data/operators.js";
+} from "./nuban.ts";
+export { type Bank, BANKS, findBank, getBank } from "./data/banks.ts";
+export { type NgOperator, OPERATOR_PREFIXES } from "./data/operators.ts";
 export {
   generateBvn,
   generateCac,
@@ -64,7 +64,7 @@ export {
   generateTin,
   generateVnin,
   type Rng,
-} from "./generate.js";
-export { mask } from "./mask.js";
+} from "./generate.ts";
+export { mask } from "./mask.ts";
 // Redaction lives at the `naija-id/redact` subpath, not here: it is roughly two thirds of the
 // bundle, and a CJS `require("naija-id")` cannot tree-shake it away.

@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { isBvn, isNin, parseBvn, parseNin } from "./national-id.js";
+import { isBvn, isNin, parseBvn, parseNin } from "./national-id.ts";
 
 describe("nin / bvn", () => {
   it("accepts exactly 11 digits (spaces ignored)", () => {

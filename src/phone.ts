@@ -1,5 +1,5 @@
-import { type NgOperator, PREFIX_TO_OPERATOR } from "./data/operators.js";
-import { type Result, err, ok } from "./result.js";
+import { type NgOperator, PREFIX_TO_OPERATOR } from "./data/operators.ts";
+import { type Result, err, ok } from "./result.ts";
 
 export type PhoneFormat = "e164" | "national" | "international";
 

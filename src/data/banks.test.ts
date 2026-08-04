@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { BANKS, findBank, getBank } from "./banks.js";
+import { BANKS, findBank, getBank } from "./banks.ts";
 
 describe("banks", () => {
   it("looks up by code and by name/slug", () => {

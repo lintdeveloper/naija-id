@@ -1,4 +1,4 @@
-import { type Result, err, ok } from "./result.js";
+import { type Result, err, ok } from "./result.ts";
 
 const isDigits = (value: string): boolean => /^\d+$/.test(value);
 

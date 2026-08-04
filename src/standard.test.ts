@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import type { StandardSchemaV1 } from "./standard-schema.js";
+import type { StandardSchemaV1 } from "./standard-schema.ts";
 import {
   bvn,
   cac,
@@ -13,7 +13,7 @@ import {
   taxId,
   tin,
   vnin,
-} from "./standard.js";
+} from "./standard.ts";
 
 function validateSync<T>(
   schema: StandardSchemaV1<string, T>,

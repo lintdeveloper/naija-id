@@ -1,7 +1,7 @@
 {
   "name": "naija-id",
   "version": "0.4.0",
-  "description": "Zero-dependency validators, formatters and PII redaction for Nigerian identifiers — phone (E.164), NIN, vNIN, BVN, Tax ID, TIN, CAC, NUBAN, plate, passport, driver's licence and RSA PIN.",
+  "description": "Zero-dependency validators, formatters and PII redaction for Nigerian identifiers \u2014 phone (E.164), NIN, vNIN, BVN, Tax ID, TIN, CAC, NUBAN, plate, passport, driver's licence and RSA PIN.",
   "keywords": [
     "nigeria",
     "naija",
@@ -93,7 +93,7 @@
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",
     "typecheck": "tsc --noEmit",
-    "lint": "biome check .",
+    "lint": "biome check . && node scripts/check-conventions.mjs",
     "format": "biome check --write .",
     "check:package": "publint && attw --pack --profile node16",
     "prepublishOnly": "pnpm build && pnpm test",

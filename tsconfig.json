@@ -5,6 +5,11 @@
     "moduleResolution": "Bundler",
     "lib": ["ES2022"],
     "strict": true,
+    // allowImportingTsExtensions requires one of noEmit/emitDeclarationOnly, and without it
+    // plain `tsc` fails with TS5096 — including inside editors, which read this file directly.
+    // tsup does all the emitting, so tsc never needs to.
+    "allowImportingTsExtensions": true,
+    "noEmit": true,
     "declaration": true,
     "esModuleInterop": true,
     "skipLibCheck": true,

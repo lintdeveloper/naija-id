@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { isDriverLicense, parseDriverLicense } from "./driver-license.js";
+import { isDriverLicense, parseDriverLicense } from "./driver-license.ts";
 
 describe("driver-license", () => {
   it("accepts the observed FRSC shapes", () => {
