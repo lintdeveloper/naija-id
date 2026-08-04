@@ -111,6 +111,14 @@ of these — the tests will tell you if you miss the last two:
 If your identifier can appear in logs, also consider `src/redact.ts` — but read the "validators
 cannot detect" note at the top of that file first, because the obvious approach does not work there.
 
+## Why the code is the way it is
+
+[`docs/design-decisions.md`](./docs/design-decisions.md) records the decisions that are easy to
+"fix" incorrectly, with the measurement each one rests on — why a validator cannot be used as a
+detector, why NUBAN is undetectable without a bank code, why a replaced identifier gets its own
+module, and what has been deliberately left out for lack of a citable source. Read the relevant
+entry before reversing something that looks wrong.
+
 ## Two project rules that are not negotiable
 
 **Format only, never existence.** This library validates *shape* and normalizes. It never claims an
