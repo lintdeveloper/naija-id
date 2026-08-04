@@ -1,6 +1,8 @@
+import type { CacKind } from "./cac.js";
 import { type NgOperator, OPERATOR_PREFIXES } from "./data/operators.js";
 import { nubanCheckDigit } from "./nuban.js";
 import { type PhoneFormat, formatPhone } from "./phone.js";
+import type { TinScheme } from "./tin.js";
 
 /**
  * Random source in [0, 1). Defaults to `Math.random`. Pass a seeded RNG for deterministic output
@@ -28,6 +30,8 @@ const letters = (n: number, rng: Rng): string =>
   );
 
 const ALL_PREFIXES = Object.values(OPERATOR_PREFIXES).flat();
+const CAC_KINDS: readonly CacKind[] = ["RC", "BN", "IT", "LP"];
+const TIN_SCHEMES: readonly TinScheme[] = ["FIRS", "JTB"];
 
 /**
  * Generate a **synthetic** 11-digit NIN.
@@ -67,6 +71,80 @@ export function generateTaxId(opts: { rng?: Rng } = {}): string {
 export function generateVnin(opts: { rng?: Rng } = {}): string {
   const rng = opts.rng ?? Math.random;
   return `${letters(2, rng)}${digits(12, rng)}${letters(2, rng)}`;
+}
+
+/**
+ * Generate a **synthetic** vehicle plate number in canonical form (`ABC123DE`). Pipe it through
+ * `formatPlate` for the dashed form written on real plates.
+ *
+ * The 3-letter LGA code is random, so it will usually not correspond to a real LGA.
+ *
+ * ⚠️ Test data only — never use against production/real systems.
+ */
+export function generatePlate(opts: { rng?: Rng } = {}): string {
+  const rng = opts.rng ?? Math.random;
+  return `${letters(3, rng)}${digits(3, rng)}${letters(2, rng)}`;
+}
+
+/**
+ * Generate a **synthetic** PENCOM RSA PIN (`PEN` + 12 digits).
+ *
+ * ⚠️ Test data only. The PIN has no checksum, so a generated value **may coincide with a real
+ * one** — never use it against production/real systems.
+ */
+export function generateRsaPin(opts: { rng?: Rng } = {}): string {
+  return `PEN${digits(12, opts.rng ?? Math.random)}`;
+}
+
+/**
+ * Generate a **synthetic** CAC registration number, e.g. `RC1234567`. `kind` defaults to a random
+ * one of RC/BN/IT/LP. The serial is 7 digits — the common modern length, though CAC itself accepts
+ * 1–10.
+ *
+ * ⚠️ Test data only — never use against production/real systems.
+ */
+export function generateCac(opts: { kind?: CacKind; rng?: Rng } = {}): string {
+  const rng = opts.rng ?? Math.random;
+  const kind = opts.kind ?? pick(CAC_KINDS, rng);
+  return `${kind}${digits(7, rng)}`;
+}
+
+/**
+ * Generate a **synthetic** *legacy* TIN — FIRS (`NNNNNNNN-NNNN`) or JTB (10 digits). `scheme`
+ * defaults to a random one of the two.
+ *
+ * For the identifier issued today, use {@link generateTaxId} — the 13-digit NRS Tax ID superseded
+ * both of these in January 2026.
+ *
+ * ⚠️ Test data only — never use against production/real systems.
+ */
+export function generateTin(opts: { scheme?: TinScheme; rng?: Rng } = {}): string {
+  const rng = opts.rng ?? Math.random;
+  const scheme = opts.scheme ?? pick(TIN_SCHEMES, rng);
+  return scheme === "FIRS" ? `${digits(8, rng)}-${digits(4, rng)}` : digits(10, rng);
+}
+
+/**
+ * Generate a **synthetic** passport number: a letter followed by 8 digits (`A10000001`), the more
+ * common of the two documented Nigerian forms.
+ *
+ * ⚠️ Test data only. Structural shape only — a generated value is not a real passport.
+ */
+export function generatePassport(opts: { rng?: Rng } = {}): string {
+  const rng = opts.rng ?? Math.random;
+  return `${letters(1, rng)}${digits(8, rng)}`;
+}
+
+/**
+ * Generate a **synthetic** FRSC driver's licence number, e.g. `FN63483AT78`. The leading block is
+ * 2 or 3 letters, chosen at random — both forms are observed in the wild.
+ *
+ * ⚠️ Test data only. Structural shape only — a generated value is not a real licence.
+ */
+export function generateDriverLicense(opts: { rng?: Rng } = {}): string {
+  const rng = opts.rng ?? Math.random;
+  const prefixLength = 2 + Math.floor(unit(rng) * 2);
+  return `${letters(prefixLength, rng)}${digits(5, rng)}${letters(2, rng)}${digits(2, rng)}`;
 }
 
 /**

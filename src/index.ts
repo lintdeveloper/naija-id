@@ -42,10 +42,16 @@ export { type Bank, BANKS, findBank, getBank } from "./data/banks.js";
 export { type NgOperator, OPERATOR_PREFIXES } from "./data/operators.js";
 export {
   generateBvn,
+  generateCac,
+  generateDriverLicense,
   generateNin,
   generateNuban,
+  generatePassport,
   generatePhone,
+  generatePlate,
+  generateRsaPin,
   generateTaxId,
+  generateTin,
   generateVnin,
   type Rng,
 } from "./generate.js";

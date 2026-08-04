@@ -162,16 +162,32 @@ take no style argument — reach for `mask()` when you need a display-safe rende
 > real**; NIN/BVN/phone/Tax ID have no reserved test range, so a value **may coincide with a real
 > one**. Never use generated data to impersonate anyone or against production/real systems.
 
-```ts
-import { generateNuban, generatePhone, generateNin, generateBvn, generateTaxId, generateVnin } from "naija-id";
+Every identifier has a generator, so a fixture set needs no hand-written constants:
 
-generateNuban("011");               // 10-digit account with a valid check digit
-generatePhone({ operator: "MTN" }); // "+234803…"
-generateNin();                      // 11-digit
-generateTaxId();                    // 13-digit
-generateVnin();                     // "AB012345678910YZ"
-generatePhone({ rng: mySeededRng }); // pass a seeded rng for deterministic tests
+```ts
+import {
+  generateNuban, generatePhone, generateNin, generateBvn, generateTaxId, generateVnin,
+  generatePlate, generateRsaPin, generateCac, generateTin, generatePassport, generateDriverLicense,
+} from "naija-id";
+
+generateNuban("011");                 // 10-digit account with a valid check digit
+generatePhone({ operator: "MTN" });   // "+234803…"
+generateNin();                        // 11-digit
+generateTaxId();                      // 13-digit
+generateVnin();                       // "AB012345678910YZ"
+generatePlate();                      // "ABC123DE"
+generateRsaPin();                     // "PEN123456789012"
+generateCac({ kind: "RC" });          // "RC1234567"    (kind defaults to a random RC/BN/IT/LP)
+generateTin({ scheme: "FIRS" });      // "12345678-0001" (scheme defaults to random FIRS/JTB)
+generatePassport();                   // "A10000001"
+generateDriverLicense();              // "FN63483AT78"
+
+generatePhone({ rng: mySeededRng });  // pass a seeded rng for deterministic tests
 ```
+
+Generators emit the **canonical** form. Compose with a formatter when you need a display shape —
+`formatPlate(generatePlate(), "dash")` → `"ABC-123DE"`. Every generator's output passes its own
+validator, and a misbehaving `rng` is clamped rather than producing malformed values.
 
 ### Mask for logs / display
 
