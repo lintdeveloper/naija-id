@@ -40,7 +40,8 @@ import { type Result, err, ok } from "./result";    // ❌ lint error
 ```
 
 This works because `allowImportingTsExtensions` is enabled in `tsconfig.json`, alongside
-`moduleResolution: "Bundler"`. tsup rewrites specifiers when it bundles, so the published `dist/`
+`moduleResolution: "Bundler"` and `noEmit` (that flag requires one of `noEmit`/`emitDeclarationOnly`,
+or plain `tsc` fails with TS5096 — tsup does all the emitting, so `tsc` never needs to). tsup rewrites specifiers when it bundles, so the published `dist/`
 still imports `.js` at runtime — the extension you write in source and the one shipped to consumers
 are simply different things.
 
