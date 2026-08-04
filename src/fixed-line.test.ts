@@ -87,6 +87,19 @@ describe("fixed-line", () => {
     }
   });
 
+  it("is stricter than parsePhone about surrounding text, deliberately", () => {
+    // parsePhone discards every non-digit, so it accepts a labelled value; this rejects letters.
+    // The guard is what stops a passport number becoming an 8-digit legacy Lagos line — pinned in
+    // both directions so the asymmetry stays a decision rather than an accident.
+    expect(isPhone("tel: 0803 123 4567")).toBe(true);
+    expect(isFixedLine("Office 02012345678")).toBe(false);
+    expect(isFixedLine("tel: 0201 234 5678")).toBe(false);
+    expect(isFixedLine("A10000001")).toBe(false);
+    // ...and the bare values still work.
+    expect(isFixedLine("02012345678")).toBe(true);
+    expect(isFixedLine("0201 234 5678")).toBe(true);
+  });
+
   it("never overlaps mobile numbers", () => {
     // A landline NSN starts with 2; isPhone requires 7/8/9. The two are disjoint by construction.
     expect(isFixedLine("08031234567")).toBe(false);
