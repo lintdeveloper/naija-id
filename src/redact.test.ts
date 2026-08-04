@@ -577,6 +577,27 @@ describe("redactText — fixed-line", () => {
   });
 });
 
+describe("redactText — voter VIN is opt-in", () => {
+  it("stays quiet by default, because 19 uppercase alnums is a common token shape", () => {
+    const line = "token 90A5AB0797293845330 issued";
+    expect(redactText(line)).toBe(line);
+    expect(DEFAULT_REDACT_TYPES).not.toContain("voter-vin");
+  });
+
+  it("masks when opted in, labelled, or under a naming key", () => {
+    expect(redactText("90A5AB0797293845330", { types: ["voter-vin"] })).toBe("****************330");
+    expect(redactText("VIN 90A5AB0797293845330")).toBe("VIN ****************330"); // label
+    expect(redactText("PVC 90A5AB0797293845330")).toContain("*");
+    expect(redact({ vin: "90A5AB0797293845330" }).vin).toBe("****************330");
+    expect(redact({ voterVin: "90A5AB0797293845330" }).voterVin).toBe("****************330");
+  });
+
+  it("still refuses a near-miss length even when opted in", () => {
+    const short = "90A5AB079729384533"; // 18
+    expect(redactText(short, { types: ["voter-vin"] })).toBe(short);
+  });
+});
+
 describe("redactText — label vocabulary", () => {
   it("reads the dictionary-verified Hausa and Igbo phone terms", () => {
     for (const line of [
