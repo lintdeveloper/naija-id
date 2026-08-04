@@ -12,6 +12,7 @@ import type { StandardSchemaV1 } from "./standard-schema.ts";
 import { type TaxId, parseTaxId } from "./tax-id.ts";
 import { type TinValue, parseTin } from "./tin.ts";
 import { type Vnin, parseVnin } from "./vnin.ts";
+import { type VoterVin, parseVoterVin } from "./voter-vin.ts";
 
 /**
  * Standard Schema factories for Nigerian identifiers (subpath: `naija-id/standard`).
@@ -44,6 +45,7 @@ export const cac = (): StandardSchemaV1<string, CacValue> => schema(parseCac);
 export const tin = (): StandardSchemaV1<string, TinValue> => schema(parseTin);
 export const taxId = (): StandardSchemaV1<string, TaxId> => schema(parseTaxId);
 export const vnin = (): StandardSchemaV1<string, Vnin> => schema(parseVnin);
+export const voterVin = (): StandardSchemaV1<string, VoterVin> => schema(parseVoterVin);
 export const plate = (): StandardSchemaV1<string, Plate> => schema(parsePlate);
 export const passport = (): StandardSchemaV1<string, Passport> => schema(parsePassport);
 export const driverLicense = (): StandardSchemaV1<string, DriverLicense> =>

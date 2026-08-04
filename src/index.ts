@@ -29,6 +29,12 @@ export { type CacFormat, type CacKind, type CacValue, formatCac, isCac, parseCac
 export { formatTin, isTin, parseTin, type TinScheme, type TinValue } from "./tin.ts";
 export { formatTaxId, isTaxId, parseTaxId, type TaxId } from "./tax-id.ts";
 export { formatVnin, isVnin, parseVnin, type Vnin, type VninFormat } from "./vnin.ts";
+export {
+  formatVoterVin,
+  isVoterVin,
+  parseVoterVin,
+  type VoterVin,
+} from "./voter-vin.ts";
 export { detect, type NaijaIdType } from "./detect.ts";
 export { type Plate, type PlateFormat, formatPlate, isPlate, parsePlate } from "./plate.ts";
 export { type Passport, formatPassport, isPassport, parsePassport } from "./passport.ts";
@@ -63,6 +69,7 @@ export {
   generateTaxId,
   generateTin,
   generateVnin,
+  generateVoterVin,
   type Rng,
 } from "./generate.ts";
 export { mask } from "./mask.ts";

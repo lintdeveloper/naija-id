@@ -12,6 +12,7 @@ import { isRsaPin } from "./rsa-pin.ts";
 import { isTaxId } from "./tax-id.ts";
 import { isTin } from "./tin.ts";
 import { isVnin } from "./vnin.ts";
+import { isVoterVin } from "./voter-vin.ts";
 
 /**
  * Identifier kinds redaction can act on. Deliberately not `NaijaIdType`: that union carries the
@@ -46,6 +47,7 @@ export const ALL_REDACT_TYPES: readonly RedactType[] = [
   "nin-or-bvn",
   "tax-id",
   "nuban",
+  "voter-vin",
 ];
 
 export interface RedactOptions {
@@ -332,6 +334,18 @@ const RECOGNIZERS: readonly Recognizer[] = [
     labelWords: "vnin|virtual nin|token",
     labels: label("vnin|virtual nin|token"),
     validate: (s) => isVnin(s),
+  },
+  {
+    type: "voter-vin",
+    evidence: "shape",
+    kind: "alnum",
+    // Opt-in only. 19 uppercase alphanumerics is distinctive for an identifier but far too close to
+    // a base32 or hex token fragment to hunt for by default.
+    source: "[0-9A-Z]{19}",
+    join: false,
+    labelWords: "vin|voter|pvc|inec",
+    labels: label("vin|voter|pvc|inec"),
+    validate: (s) => isVoterVin(s),
   },
   {
     type: "plate",
@@ -692,6 +706,8 @@ const KEY_HINTS: ReadonlyArray<{ key: string; types: readonly RedactType[] }> = 
   { key: "licence", types: ["driver-license"] },
   { key: "license", types: ["driver-license"] },
   { key: "cac", types: ["cac"] },
+  { key: "vin", types: ["voter-vin"] },
+  { key: "voter", types: ["voter-vin"] },
 ];
 
 const VALIDATORS: Record<RedactType, (s: string, bankCodes: readonly string[]) => boolean> = {
@@ -706,6 +722,7 @@ const VALIDATORS: Record<RedactType, (s: string, bankCodes: readonly string[]) =
   passport: (s) => isPassport(s),
   "driver-license": (s) => isDriverLicense(s),
   "rsa-pin": (s) => isRsaPin(s),
+  "voter-vin": (s) => isVoterVin(s),
   // A key already asserted "account number"; without codes we accept the shape and mask anyway.
   nuban: (s, codes) =>
     codes.length > 0 ? codes.some((c) => isValidNuban(s, c)) : /^\d{10}$/.test(s),

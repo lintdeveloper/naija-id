@@ -5,7 +5,7 @@
 [![license MIT](https://img.shields.io/npm/l/naija-id.svg)](./LICENSE)
 
 Modern, typed, zero-dependency validators for **Nigerian identifiers** — phone numbers,
-**NIN**, **vNIN**, **BVN**, **CAC** (RC/BN/IT/LP), **Tax ID**, **TIN**, **NUBAN**, vehicle
+**NIN**, **vNIN**, **BVN**, **CAC** (RC/BN/IT/LP), **Tax ID**, **TIN**, **NUBAN**, voter **VIN**, vehicle
 **plates**, **passport**, **driver's licence** and PENCOM **RSA PIN** — with a consistent result
 type, an optional **Zod** integration and zero-dependency **Standard Schema** support
 (Zod v4 / Valibot / ArkType / RHF / tRPC).
@@ -50,7 +50,9 @@ isNin("12345678901");                         // true (11 digits — format only
 parseCac("RC 1234567");                       // { valid: true, value: { kind: "RC", number: "1234567", normalized: "RC1234567" } }
 parseTin("12345678-0001");                    // { valid: true, value: { scheme: "FIRS", normalized: "12345678-0001" } }
 
-detect("08031234567");                        // "phone" | "nin-or-bvn" | "vnin" | "cac" | "tin" | "tax-id" | "plate" | "passport" | "driver-license" | "rsa-pin" | "unknown"
+detect("08031234567");                        // "phone" | "fixed-line" | "nin-or-bvn" | "vnin" | "cac" | "tin"
+                                              // | "tax-id" | "plate" | "passport" | "driver-license"
+                                              // | "rsa-pin" | "voter-vin" | "unknown"
 ```
 
 ### Fixed-line (landline)
@@ -121,6 +123,32 @@ formatVnin("JZ426633988976CH", "grouped"); // "JZ-4266-3398-8976-CH"
 
 > A format-valid vNIN may still be unusable: tokens **expire after 72 hours** and are scoped to the
 > enterprise that requested them. Neither can be checked offline — only NIMC can confirm a token.
+
+### Voter VIN (PVC)
+
+The 19-character Voter Identification Number printed on a Permanent Voter Card:
+
+```ts
+import { isVoterVin, formatVoterVin } from "naija-id";
+
+isVoterVin("90A5AB0797293845330");        // true
+formatVoterVin("90a5-ab07-9729-3845-330"); // "90A5AB0797293845330"
+```
+
+**Structural only, and deliberately loose.** INEC publishes no format specification, so the length
+comes from live provider samples ([VerifyMe](https://docs.verifyme.ng/identity-verifications/voters-card),
+[Prembly](https://docs.prembly.com/docs/voters-identification-number-copy),
+[Youverify](https://doc.youverify.co/know-your-customer-services-kyc/id-data-matching-eidv/nigeria/verify-nigerian-permanent-voters-card-pvc))
+— all 19 characters. Two things are **not** enforced, because the failure mode is rejecting a real
+voter's card:
+
+- **Hex.** Every letter in those samples falls in `A`–`F`, so a VIN is very likely hexadecimal. Eleven
+  observed letters isn't enough to bet a false rejection on, so `[0-9A-Z]` is accepted.
+  (`generateVoterVin` *does* emit hex, so fixtures look real — generate conservatively, validate
+  permissively.)
+- **State/LGA.** The widely-repeated claim that the first two digits are a state code (Abia `01` …
+  FCT `37`) does not describe the VIN — every sample begins `90`, which is no state. That belongs to
+  the *polling unit* code printed alongside it. Nothing is decoded from a VIN here.
 
 ### NUBAN (real checksum) + bank codes
 

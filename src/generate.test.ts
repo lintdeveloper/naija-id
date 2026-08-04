@@ -18,6 +18,7 @@ import {
   generateTaxId,
   generateTin,
   generateVnin,
+  generateVoterVin,
 } from "./generate.ts";
 import { isBvn, isNin } from "./national-id.ts";
 import { isValidNuban } from "./nuban.ts";
@@ -28,6 +29,7 @@ import { isRsaPin } from "./rsa-pin.ts";
 import { isTaxId } from "./tax-id.ts";
 import { isTin, parseTin } from "./tin.ts";
 import { isVnin } from "./vnin.ts";
+import { isVoterVin } from "./voter-vin.ts";
 
 const zero = () => 0;
 const one = () => 1;
@@ -52,6 +54,7 @@ const GENERATORS: ReadonlyArray<{
   { label: "bvn", generate: generateBvn, isValid: isBvn },
   { label: "taxId", generate: generateTaxId, isValid: isTaxId },
   { label: "vnin", generate: generateVnin, isValid: isVnin },
+  { label: "voterVin", generate: generateVoterVin, isValid: isVoterVin },
   { label: "phone", generate: generatePhone, isValid: isPhone },
   { label: "fixedLine", generate: generateFixedLine, isValid: isFixedLine },
   { label: "plate", generate: generatePlate, isValid: isPlate },
