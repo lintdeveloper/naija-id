@@ -1,7 +1,7 @@
 {
   "name": "naija-id",
   "version": "0.4.0",
-  "description": "Zero-dependency validators and normalizers for Nigerian identifiers — phone (E.164), NIN, BVN, CAC (RC/BN/IT/LP) and TIN.",
+  "description": "Zero-dependency validators, formatters and PII redaction for Nigerian identifiers — phone (E.164), NIN, vNIN, BVN, Tax ID, TIN, CAC, NUBAN, plate, passport, driver's licence and RSA PIN.",
   "keywords": [
     "nigeria",
     "naija",
@@ -10,13 +10,21 @@
     "msisdn",
     "e164",
     "nin",
+    "vnin",
     "bvn",
     "cac",
     "rc-number",
     "tin",
+    "tax-id",
     "nuban",
     "bank-code",
-    "identity"
+    "plate",
+    "passport",
+    "rsa-pin",
+    "identity",
+    "kyc",
+    "pii",
+    "redaction"
   ],
   "license": "MIT",
   "author": "Musa Musa",
@@ -64,6 +72,16 @@
       "require": {
         "types": "./dist/standard.d.cts",
         "default": "./dist/standard.cjs"
+      }
+    },
+    "./redact": {
+      "import": {
+        "types": "./dist/redact.d.ts",
+        "default": "./dist/redact.js"
+      },
+      "require": {
+        "types": "./dist/redact.d.cts",
+        "default": "./dist/redact.cjs"
       }
     },
     "./package.json": "./package.json"

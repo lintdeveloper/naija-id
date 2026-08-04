@@ -17,7 +17,12 @@ export function mask(value: string, opts: { reveal?: number; maskChar?: string }
   const chars = [...(value ?? "")];
   const maskChar = opts.maskChar || "*";
   const alnumCount = chars.filter(isAlnum).length;
-  const reveal = Math.min(Math.max(0, opts.reveal ?? 3), Math.max(0, alnumCount - 1));
+  // Fail CLOSED on a non-finite reveal. A NaN arriving from config plumbing (`Number(env.REVEAL)`)
+  // previously disabled masking entirely and returned the plaintext — the worst possible default.
+  const requested = Number(opts.reveal ?? 3);
+  const reveal = Number.isFinite(requested)
+    ? Math.min(Math.max(0, requested), Math.max(0, alnumCount - 1))
+    : 0;
   const revealFrom = alnumCount - reveal;
   let seen = 0;
   return chars

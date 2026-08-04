@@ -56,3 +56,5 @@ export {
   type Rng,
 } from "./generate.js";
 export { mask } from "./mask.js";
+// Redaction lives at the `naija-id/redact` subpath, not here: it is roughly two thirds of the
+// bundle, and a CJS `require("naija-id")` cannot tree-shake it away.
