@@ -38,7 +38,14 @@ export interface NubanMatch {
  * ```
  *
  * A bank appears once per matching code, so a bank whose 6-digit *and* 3-digit codes both match
- * yields two entries — each is a distinct thing to try.
+ * yields two entries — each is a distinct thing to try. (Sterling and Stanbic IBTC always do, because
+ * their two codes share a residue.)
+ *
+ * **Order carries no meaning.** Results come out in dataset order, NIBSS code before legacy code, and
+ * that is stable but arbitrary — it is *not* a ranking. Nothing computable offline says which
+ * candidate is likelier, so do not read the first entry as the best guess: every entry needs the same
+ * enquiry call. If you can narrow further, do it with information the caller has (the customer's
+ * stated bank, a prior transaction, the app's own bank list), not with this order.
  *
  * Returns `[]` only when `accountNumber` is not 10 digits.
  */

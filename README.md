@@ -220,6 +220,11 @@ So it's a **~10× shortlist**: a NIBSS name-enquiry sweep drops from 51 paid, ra
 about five. A bank appears once per matching code, so one whose 6-digit *and* 3-digit codes both match
 yields two entries — each a distinct thing to try.
 
+**The order is not a ranking.** Results come out in dataset order, and nothing computable offline says
+which candidate is likelier — so don't read the first entry as the best guess. Narrow further with
+information you already have (the customer's stated bank, a prior transaction) rather than with this
+order.
+
 This is also why `redactText` refuses to detect NUBANs without a bank code: the same fact that makes a
 shortlist useful makes a silent yes/no detector dishonest.
 ### More identifiers
