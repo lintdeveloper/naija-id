@@ -252,7 +252,12 @@ Consequently these are **missed** unless you opt in:
   forcing the dataset is a detector that always says yes. Pass the code you actually know:
   `redactText(log, { bankCodes: ["058"] })`
 - concatenated digit runs (`08031234567890`), and non-ASCII digits (`０８０３…`, `٠٨٠٣…`)
-- labels in Pidgin, Hausa, Yoruba or Igbo — the label vocabulary is English
+- labels the built-in vocabulary doesn't know. It covers English plus dictionary-verified Hausa
+  (`lambar waya`, `waya`) and Igbo (`nọmba ekwentị`) phone terms. **Yoruba is not included** — I
+  could not verify its phone vocabulary from a trustworthy source, and a guessed term produces a
+  silent miss that looks like coverage. Nigerian Pidgin is largely spoken and its written
+  orthography is unstandardised, so there is no reliable list to ship. Add your own:
+  `redactText(line, { labels: { phone: ["fóònù"], "nin-or-bvn": ["identity no"] } })`
 - values under key names the built-in table misses (`custNo`, `ac_no`) — use `keys: ["custNo"]`
 - anything inside a `Date`, `Map`, `Set`, `RegExp` or class instance, which pass through by reference
 
