@@ -87,6 +87,12 @@ function toNsn(input: string): { nsn: string; upgraded: boolean } | null {
  * Deliberately separate from {@link parsePhone}, which stays mobile-only: `isPhone` requires an NSN
  * starting 7, 8 or 9, and a landline NSN starts with 2, so the two never overlap.
  *
+ * **Stricter than `parsePhone` about surrounding text, on purpose.** `parsePhone` discards every
+ * non-digit, so `isPhone("tel: 0803 123 4567")` is `true`; this function rejects any input containing
+ * a letter, so `isFixedLine("Office 02012345678")` is `false`. The guard is what stops a passport
+ * number like `A10000001` being read as an 8-digit legacy Lagos line. Pass a bare value, not a
+ * labelled one — or use `redactText`, whose job is finding identifiers inside prose.
+ *
  * `area` is populated only for codes with a live allocation in the October 2022 NCC plan — the same
  * treatment `parsePhone` gives `originalOperator`. A valid-shaped number in a historic code (Sokoto
  * `060`, Akure `034`) parses fine but reports no area.

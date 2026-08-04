@@ -87,6 +87,18 @@ parseFixedLine("01 234 5678").value.upgraded;  // true
 
 Mobile and fixed-line never overlap: a landline NSN starts with `2`, and `isPhone` requires 7, 8 or 9.
 
+One asymmetry worth knowing: `parseFixedLine` **rejects input containing letters**, while `parsePhone`
+discards every non-digit and so accepts a labelled value.
+
+```ts
+isPhone("tel: 0803 123 4567");      // true  — parsePhone strips everything non-digit
+isFixedLine("Office 02012345678");  // false — the letter guard rejects it
+```
+
+The guard is deliberate: without it a passport number like `A10000001` becomes eight digits that read
+as a legacy Lagos line. Pass bare values to either function, and reach for `redactText` when you need
+to find identifiers *inside* prose.
+
 ### Tax ID (13 digits) — and the legacy TIN
 
 Nigeria replaced TIN with a unified **Tax ID** under the Nigeria Tax Administration Act 2025; the
