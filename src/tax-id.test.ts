@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
-import { formatTaxId, isTaxId, parseTaxId } from "./tax-id.js";
-import { isTin } from "./tin.js";
+import { formatTaxId, isTaxId, parseTaxId } from "./tax-id.ts";
+import { isTin } from "./tin.ts";
 
 describe("tax-id", () => {
   it("accepts 13 digits, with or without spacing", () => {

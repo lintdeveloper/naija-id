@@ -1,14 +1,14 @@
-import { isCac } from "./cac.js";
-import { isDriverLicense } from "./driver-license.js";
-import { isFixedLine } from "./fixed-line.js";
-import { isNin } from "./national-id.js";
-import { isPassport } from "./passport.js";
-import { isPhone } from "./phone.js";
-import { isPlate } from "./plate.js";
-import { isRsaPin } from "./rsa-pin.js";
-import { isTaxId } from "./tax-id.js";
-import { isTin } from "./tin.js";
-import { isVnin } from "./vnin.js";
+import { isCac } from "./cac.ts";
+import { isDriverLicense } from "./driver-license.ts";
+import { isFixedLine } from "./fixed-line.ts";
+import { isNin } from "./national-id.ts";
+import { isPassport } from "./passport.ts";
+import { isPhone } from "./phone.ts";
+import { isPlate } from "./plate.ts";
+import { isRsaPin } from "./rsa-pin.ts";
+import { isTaxId } from "./tax-id.ts";
+import { isTin } from "./tin.ts";
+import { isVnin } from "./vnin.ts";
 
 export type NaijaIdType =
   | "phone"

@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { isTin, parseTin } from "./tin.js";
+import { isTin, parseTin } from "./tin.ts";
 
 describe("tin", () => {
   it("recognizes FIRS and JTB schemes", () => {

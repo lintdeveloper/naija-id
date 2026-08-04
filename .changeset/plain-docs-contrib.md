@@ -2,12 +2,21 @@
 "naija-id": patch
 ---
 
-Contributor ergonomics — no runtime changes.
+Contributor ergonomics — no runtime or API changes.
 
-The `.js` extension on relative imports in `.ts` files is the single most confusing thing about this codebase to a newcomer, and it was undocumented tribal knowledge. It is now explained, enforced and automated:
+**Relative imports now use `.ts`, the file that actually exists on disk**, instead of the `.js` specifier TypeScript codebases often write:
 
-- **Explained** in `CONTRIBUTING.md`: TypeScript never rewrites import specifiers, so the path is written as it will exist at runtime. This project's `moduleResolution` is `"Bundler"`, so extensionless imports *would* compile — the extension is a deliberate portability convention that keeps the source valid under Node's native ESM resolution, not a compiler requirement. Dropping it is a one-way door.
-- **Enforced** by Biome's `useImportExtensions` rule, so `pnpm lint` catches a missing extension and `pnpm format` fixes it, instead of a reviewer having to spot it.
-- **Automated** via `.vscode/settings.json`, which sets `importModuleSpecifierEnding` so auto-import adds `.js`, plus format-on-save and organize-imports through Biome.
+```ts
+import { type Result, err, ok } from "./result.ts";
+```
 
-`CONTRIBUTING.md` also gains a module-layout map, the shared `parseX`/`isX`/`formatX` shape, and a seven-step checklist for adding an identifier — including the two cross-cutting contract tables (`format.test.ts`, `generate.test.ts`) that a new identifier must join or it silently loses round-trip and rng-clamp coverage. The two non-negotiable project rules (format-never-existence, and cite a source for anything in `src/data/`) are now written down rather than implied.
+This works via `allowImportingTsExtensions` in `tsconfig.json`. tsup still rewrites specifiers when it bundles, so the published `dist/` imports `.js` at runtime exactly as before — the extension written in source and the one shipped to consumers are different things, and nothing about the package output changed.
+
+The `.js` convention exists for a real reason (TypeScript never rewrites specifiers, so under Node's native ESM resolution the runtime path is what counts) but it isn't necessary while a bundler is in the loop, and `.ts` is far less surprising to read.
+
+Enforcement matters here, because **neither Biome nor `tsc` can catch a wrong extension**: `useImportExtensions` only requires *an* extension, and `"Bundler"` resolution maps `./result.js` onto `result.ts` happily, so a stray `.js` passes both lint and typecheck. Two things close that gap:
+
+- Biome's `useImportExtensions` rule catches a **missing** extension; `pnpm format` fixes it.
+- `src/conventions.test.ts` catches a **wrong** extension, names the offending file and specifier, and additionally asserts every relative import resolves to a file that really exists.
+
+`CONTRIBUTING.md` also gains a module-layout map, the shared `parseX`/`isX`/`formatX` shape, and a seven-step checklist for adding an identifier — including the two cross-cutting contract tables (`format.test.ts`, `generate.test.ts`) that a new identifier must join or it silently loses round-trip and rng-clamp coverage. The two non-negotiable project rules (format-never-existence, and cite a source for anything in `src/data/`) are now written down rather than implied. `.vscode/settings.json` sets up format-on-save and organize-imports via Biome.

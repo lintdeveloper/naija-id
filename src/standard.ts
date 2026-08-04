@@ -1,17 +1,17 @@
-import { type CacValue, parseCac } from "./cac.js";
-import { type DriverLicense, parseDriverLicense } from "./driver-license.js";
-import { type NgFixedLine, parseFixedLine } from "./fixed-line.js";
-import { type NationalId, parseBvn, parseNin } from "./national-id.js";
-import { type Nuban, parseNuban } from "./nuban.js";
-import { type Passport, parsePassport } from "./passport.js";
-import { type NgPhone, parsePhone } from "./phone.js";
-import { type Plate, parsePlate } from "./plate.js";
-import type { Result } from "./result.js";
-import { type RsaPin, parseRsaPin } from "./rsa-pin.js";
-import type { StandardSchemaV1 } from "./standard-schema.js";
-import { type TaxId, parseTaxId } from "./tax-id.js";
-import { type TinValue, parseTin } from "./tin.js";
-import { type Vnin, parseVnin } from "./vnin.js";
+import { type CacValue, parseCac } from "./cac.ts";
+import { type DriverLicense, parseDriverLicense } from "./driver-license.ts";
+import { type NgFixedLine, parseFixedLine } from "./fixed-line.ts";
+import { type NationalId, parseBvn, parseNin } from "./national-id.ts";
+import { type Nuban, parseNuban } from "./nuban.ts";
+import { type Passport, parsePassport } from "./passport.ts";
+import { type NgPhone, parsePhone } from "./phone.ts";
+import { type Plate, parsePlate } from "./plate.ts";
+import type { Result } from "./result.ts";
+import { type RsaPin, parseRsaPin } from "./rsa-pin.ts";
+import type { StandardSchemaV1 } from "./standard-schema.ts";
+import { type TaxId, parseTaxId } from "./tax-id.ts";
+import { type TinValue, parseTin } from "./tin.ts";
+import { type Vnin, parseVnin } from "./vnin.ts";
 
 /**
  * Standard Schema factories for Nigerian identifiers (subpath: `naija-id/standard`).
@@ -52,4 +52,4 @@ export const rsaPin = (): StandardSchemaV1<string, RsaPin> => schema(parseRsaPin
 export const nuban = (bankCode: string): StandardSchemaV1<string, Nuban> =>
   schema((value) => parseNuban(value, bankCode));
 
-export type { StandardSchemaV1 } from "./standard-schema.js";
+export type { StandardSchemaV1 } from "./standard-schema.ts";

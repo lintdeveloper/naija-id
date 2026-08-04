@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { mask } from "./mask.js";
+import { mask } from "./mask.ts";
 
 describe("mask", () => {
   it("reveals only the last few characters", () => {

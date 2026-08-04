@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { formatPhone, isPhone, parsePhone, phoneOperator } from "./phone.js";
+import { formatPhone, isPhone, parsePhone, phoneOperator } from "./phone.ts";
 
 describe("phone", () => {
   it("accepts local, +234 and 234 forms and strips separators", () => {

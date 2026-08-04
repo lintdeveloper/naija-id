@@ -1,9 +1,9 @@
 import { describe, expect, it } from "vitest";
-import { AREA_CODES, getAreaCode } from "./data/area-codes.js";
-import { detect } from "./detect.js";
-import { fixedLineArea, formatFixedLine, isFixedLine, parseFixedLine } from "./fixed-line.js";
-import { isNin } from "./national-id.js";
-import { isPhone } from "./phone.js";
+import { AREA_CODES, getAreaCode } from "./data/area-codes.ts";
+import { detect } from "./detect.ts";
+import { fixedLineArea, formatFixedLine, isFixedLine, parseFixedLine } from "./fixed-line.ts";
+import { isNin } from "./national-id.ts";
+import { isPhone } from "./phone.ts";
 
 describe("fixed-line", () => {
   it("accepts the post-2023 form in every notation", () => {

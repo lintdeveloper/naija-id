@@ -1,5 +1,5 @@
-import { getAreaCode } from "./data/area-codes.js";
-import { type Result, err, ok } from "./result.js";
+import { getAreaCode } from "./data/area-codes.ts";
+import { type Result, err, ok } from "./result.ts";
 
 export type FixedLineFormat = "e164" | "national" | "international";
 

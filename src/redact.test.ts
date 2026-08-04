@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
-import { formatPhone, formatPlate, formatRsaPin, formatVnin } from "./index.js";
-import { isPhone, isPlate } from "./index.js";
+import { formatPhone, formatPlate, formatRsaPin, formatVnin } from "./index.ts";
+import { isPhone, isPlate } from "./index.ts";
 import {
   ALL_REDACT_TYPES,
   DEFAULT_REDACT_TYPES,
@@ -8,7 +8,7 @@ import {
   redact,
   redactText,
   scanText,
-} from "./redact.js";
+} from "./redact.ts";
 
 const ALL = { types: ALL_REDACT_TYPES, bareDigits: true } as const;
 

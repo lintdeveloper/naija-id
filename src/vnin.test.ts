@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { formatVnin, isVnin, parseVnin } from "./vnin.js";
+import { formatVnin, isVnin, parseVnin } from "./vnin.ts";
 
 // Sample values published in Nigerian KYC provider docs (QoreID).
 const SAMPLES = ["JZ426633988976CH", "AS527634292535OL"];

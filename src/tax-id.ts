@@ -1,4 +1,4 @@
-import { type Result, err, ok } from "./result.js";
+import { type Result, err, ok } from "./result.ts";
 
 export interface TaxId {
   /** Canonical form: the 13 digits, whitespace stripped. */

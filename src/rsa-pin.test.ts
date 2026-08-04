@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { isRsaPin, parseRsaPin } from "./rsa-pin.js";
+import { isRsaPin, parseRsaPin } from "./rsa-pin.ts";
 
 describe("rsa-pin", () => {
   it("accepts PEN + 12 digits", () => {

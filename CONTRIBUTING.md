@@ -1,7 +1,7 @@
 # Contributing to naija-id
 
-Thanks for helping! This is a small, zero-dependency TypeScript library. If you open the repo in
-VS Code the workspace settings will format on save and add import extensions for you.
+Thanks for helping! This is a small, zero-dependency TypeScript library. Open it in VS Code and the
+workspace settings format on save via Biome; `pnpm lint` is the backstop for everything else.
 
 ## Setup
 
@@ -15,7 +15,7 @@ Node 22 (see `.nvmrc`), pnpm only.
 
 - `pnpm test` — run tests (Vitest); `pnpm test:coverage` for coverage
 - `pnpm vitest run src/phone.test.ts` — one file; add `-t "name"` for one test
-- `pnpm lint` / `pnpm format` — Biome (check / write)
+- `pnpm lint` — Biome + `scripts/check-conventions.mjs`; `pnpm format` writes fixes
 - `pnpm typecheck` — tsc
 - `pnpm build` — tsup (ESM + CJS + types)
 - `pnpm check:package` — publint + are-the-types-wrong
@@ -29,23 +29,37 @@ pnpm lint && pnpm typecheck && pnpm test:coverage && pnpm build && pnpm check:pa
 Run them **separately** rather than chained if something fails — a piped `&&` chain can hide which
 step exited non-zero.
 
-## Why `.js` in a `.ts` import?
+## Import extensions: use `.ts`
 
-Because TypeScript never rewrites import specifiers. You write the path as it will exist at
-**runtime**, and at runtime these are `.js` files:
+Relative imports name the file that actually exists on disk:
 
 ```ts
-import { type Result, err, ok } from "./result.js"; // ✅ resolves to src/result.ts
+import { type Result, err, ok } from "./result.ts"; // ✅
+import { type Result, err, ok } from "./result.js"; // ❌ no such file
 import { type Result, err, ok } from "./result";    // ❌ lint error
 ```
 
-This project's `moduleResolution` is `"Bundler"`, so extensionless imports *would* typecheck — the
-extension is a deliberate portability convention, not a compiler requirement. It keeps the source
-valid under Node's native ESM resolution (`"NodeNext"`), which matters if the bundler is ever dropped
-or the source is consumed directly. Going the other way is a one-way door.
+This works because `allowImportingTsExtensions` is enabled in `tsconfig.json`, alongside
+`moduleResolution: "Bundler"`. tsup rewrites specifiers when it bundles, so the published `dist/`
+still imports `.js` at runtime — the extension you write in source and the one shipped to consumers
+are simply different things.
 
-You don't have to remember it: `useImportExtensions` is enabled in `biome.json`, so `pnpm lint`
-catches a missing extension and `pnpm format` fixes it. VS Code adds it on auto-import.
+Some TypeScript codebases write `.js` here instead, because TypeScript never rewrites specifiers and
+under Node's native ESM resolution the runtime path is what counts. That's a real convention and it's
+what this repo used to do — it just isn't necessary while a bundler is in the loop, and `.ts` is the
+less surprising thing to read.
+
+Two things enforce it, because **neither Biome nor `tsc` can**: `useImportExtensions` only requires
+*an* extension, and `"Bundler"` resolution maps `./result.js` onto `result.ts` quite happily, so a
+stray `.js` passes both `pnpm lint` and `pnpm typecheck`.
+
+- Biome's `useImportExtensions` catches a **missing** extension; `pnpm format` fixes it.
+- `scripts/check-conventions.mjs`, which `pnpm lint` also runs, catches a **wrong** extension and a
+  **dangling** path, naming the file, line and specifier.
+
+That script is plain Node ESM rather than a Vitest test on purpose: reading the filesystem needs
+`@types/node`, and installing it would put `process` and `Buffer` in scope for the whole library —
+which is how browser-unsafe code slips into a zero-dependency package.
 
 ## How the code is laid out
 
@@ -81,7 +95,7 @@ The library has twelve identifiers and they all look alike on purpose. To add on
 of these — the tests will tell you if you miss the last two:
 
 1. `src/<name>.ts` — `parseX` / `isX` / `formatX`, importing `{ type Result, err, ok }` from
-   `./result.js`.
+   `./result.ts`.
 2. `src/<name>.test.ts` — colocated tests, including cases that must **not** validate.
 3. `src/generate.ts` — a `generateX`, reusing the `unit()` rng clamp and `digit`/`digits`/`pick`/
    `letters` helpers. Keep the ⚠️ test-data-only disclaimer in the JSDoc; that is a firm rule.

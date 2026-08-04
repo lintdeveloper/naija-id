@@ -1,9 +1,9 @@
-import type { CacKind } from "./cac.js";
-import { AREA_CODES } from "./data/area-codes.js";
-import { type NgOperator, OPERATOR_PREFIXES } from "./data/operators.js";
-import { nubanCheckDigit } from "./nuban.js";
-import { type PhoneFormat, formatPhone } from "./phone.js";
-import type { TinScheme } from "./tin.js";
+import type { CacKind } from "./cac.ts";
+import { AREA_CODES } from "./data/area-codes.ts";
+import { type NgOperator, OPERATOR_PREFIXES } from "./data/operators.ts";
+import { nubanCheckDigit } from "./nuban.ts";
+import { type PhoneFormat, formatPhone } from "./phone.ts";
+import type { TinScheme } from "./tin.ts";
 
 /**
  * Random source in [0, 1). Defaults to `Math.random`. Pass a seeded RNG for deterministic output

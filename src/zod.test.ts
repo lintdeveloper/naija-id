@@ -13,7 +13,7 @@ import {
   taxId,
   tin,
   vnin,
-} from "./zod.js";
+} from "./zod.ts";
 
 describe("zod schemas", () => {
   it("validate within a z.object", () => {

@@ -1,8 +1,8 @@
 import { describe, expect, it } from "vitest";
-import { isCac } from "./cac.js";
-import { type NgOperator, OPERATOR_PREFIXES } from "./data/operators.js";
-import { isDriverLicense } from "./driver-license.js";
-import { isFixedLine } from "./fixed-line.js";
+import { isCac } from "./cac.ts";
+import { type NgOperator, OPERATOR_PREFIXES } from "./data/operators.ts";
+import { isDriverLicense } from "./driver-license.ts";
+import { isFixedLine } from "./fixed-line.ts";
 import {
   type Rng,
   generateBvn,
@@ -18,16 +18,16 @@ import {
   generateTaxId,
   generateTin,
   generateVnin,
-} from "./generate.js";
-import { isBvn, isNin } from "./national-id.js";
-import { isValidNuban } from "./nuban.js";
-import { isPassport } from "./passport.js";
-import { isPhone, phoneOperator } from "./phone.js";
-import { isPlate } from "./plate.js";
-import { isRsaPin } from "./rsa-pin.js";
-import { isTaxId } from "./tax-id.js";
-import { isTin, parseTin } from "./tin.js";
-import { isVnin } from "./vnin.js";
+} from "./generate.ts";
+import { isBvn, isNin } from "./national-id.ts";
+import { isValidNuban } from "./nuban.ts";
+import { isPassport } from "./passport.ts";
+import { isPhone, phoneOperator } from "./phone.ts";
+import { isPlate } from "./plate.ts";
+import { isRsaPin } from "./rsa-pin.ts";
+import { isTaxId } from "./tax-id.ts";
+import { isTin, parseTin } from "./tin.ts";
+import { isVnin } from "./vnin.ts";
 
 const zero = () => 0;
 const one = () => 1;

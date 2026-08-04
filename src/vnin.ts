@@ -1,4 +1,4 @@
-import { type Result, err, ok } from "./result.js";
+import { type Result, err, ok } from "./result.ts";
 
 export interface Vnin {
   /** Canonical hyphen-free uppercase form, e.g. `JZ426633988976CH`. */
