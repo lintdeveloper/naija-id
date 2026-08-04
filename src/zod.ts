@@ -1,6 +1,7 @@
 import { z } from "zod";
 import { isCac } from "./cac.js";
 import { isDriverLicense } from "./driver-license.js";
+import { isFixedLine } from "./fixed-line.js";
 import { isBvn, isNin } from "./national-id.js";
 import { isValidNuban } from "./nuban.js";
 import { isPassport } from "./passport.js";
@@ -17,6 +18,8 @@ import { isVnin } from "./vnin.js";
  * To normalize, pipe the value through the matching `format*`/`parse*` helper from `naija-id`.
  */
 export const ngPhone = () => z.string().refine(isPhone, "Invalid Nigerian phone number");
+/** Fixed-line (landline). Separate from `ngPhone`, which stays mobile-only. */
+export const fixedLine = () => z.string().refine(isFixedLine, "Invalid Nigerian fixed-line number");
 export const nin = () => z.string().refine(isNin, "Invalid NIN — expected 11 digits");
 export const bvn = () => z.string().refine(isBvn, "Invalid BVN — expected 11 digits");
 export const cac = () => z.string().refine(isCac, "Invalid CAC registration number");

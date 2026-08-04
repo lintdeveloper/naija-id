@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { formatCac, isCac } from "./cac.js";
 import { formatDriverLicense, isDriverLicense } from "./driver-license.js";
+import { formatFixedLine, isFixedLine } from "./fixed-line.js";
 import { formatBvn, formatNin, isBvn, isNin } from "./national-id.js";
 import { formatNuban, isValidNuban } from "./nuban.js";
 import { formatPassport, isPassport } from "./passport.js";
@@ -45,6 +46,20 @@ const CASES: ReadonlyArray<{
     isValid: isPhone,
     input: "08031234567",
     expected: "+234 803 123 4567",
+  },
+  {
+    label: "fixed-line/e164 (default)",
+    format: (i) => formatFixedLine(i),
+    isValid: isFixedLine,
+    input: "0201 234 5678",
+    expected: "+2342012345678",
+  },
+  {
+    label: "fixed-line/national",
+    format: (i) => formatFixedLine(i, "national"),
+    isValid: isFixedLine,
+    input: "+2342084123456",
+    expected: "02084 123 456",
   },
   {
     label: "nin",

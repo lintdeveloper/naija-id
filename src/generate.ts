@@ -1,4 +1,5 @@
 import type { CacKind } from "./cac.js";
+import { AREA_CODES } from "./data/area-codes.js";
 import { type NgOperator, OPERATOR_PREFIXES } from "./data/operators.js";
 import { nubanCheckDigit } from "./nuban.js";
 import { type PhoneFormat, formatPhone } from "./phone.js";
@@ -145,6 +146,27 @@ export function generateDriverLicense(opts: { rng?: Rng } = {}): string {
   const rng = opts.rng ?? Math.random;
   const prefixLength = 2 + Math.floor(unit(rng) * 2);
   return `${letters(prefixLength, rng)}${digits(5, rng)}${letters(2, rng)}${digits(2, rng)}`;
+}
+
+/**
+ * Generate a **synthetic** Nigerian fixed-line number in E.164 form, e.g. `+2342012345678`.
+ * `areaCode` accepts either the post-2023 form (`201`) or the pre-2023 one (`01`); it defaults to a
+ * random allocated area. Throws if the code is not one this library knows.
+ *
+ * ⚠️ Test data only. Nigeria has no reserved test range, so a generated number **may belong to a
+ * real subscriber** — never contact it or use it against production/real systems.
+ */
+export function generateFixedLine(opts: { areaCode?: string; rng?: Rng } = {}): string {
+  const rng = opts.rng ?? Math.random;
+  const entry =
+    opts.areaCode === undefined
+      ? pick(AREA_CODES, rng)
+      : AREA_CODES.find((a) => a.code === opts.areaCode || a.legacyCode === opts.areaCode);
+  if (entry === undefined) {
+    throw new Error(`generateFixedLine: unknown area code "${opts.areaCode}"`);
+  }
+  // Area code + subscriber is always a 10-digit national significant number.
+  return `+234${entry.code}${digits(10 - entry.code.length, rng)}`;
 }
 
 /**

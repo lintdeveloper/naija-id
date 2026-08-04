@@ -53,6 +53,38 @@ parseTin("12345678-0001");                    // { valid: true, value: { scheme:
 detect("08031234567");                        // "phone" | "nin-or-bvn" | "vnin" | "cac" | "tin" | "tax-id" | "plate" | "passport" | "driver-license" | "rsa-pin" | "unknown"
 ```
 
+### Fixed-line (landline)
+
+Separate from `parsePhone`, which stays mobile-only. The NCC prepended `20` to every geographic area
+code in 2023 (grace period ended 1 January 2024), so a current number is `0` + `20` + 1–2 area
+digits + subscriber — a 10-digit national significant number:
+
+```ts
+import { parseFixedLine, isFixedLine, formatFixedLine, fixedLineArea } from "naija-id";
+
+isFixedLine("0201 234 5678");                       // true
+fixedLineArea("02084 123 456");                     // "Port Harcourt"
+formatFixedLine("0201 234 5678", "international");  // "+234 201 234 5678"
+
+parseFixedLine("0201 234 5678").value;
+// { areaCode: "201", subscriber: "2345678", area: "Lagos", legacyAreaCode: "01", upgraded: false, … }
+```
+
+**Pre-2023 numbers are upgraded, not rejected** — old records are full of them and the mapping is
+mechanical. The trunk `0` must be present, exactly as they were always written:
+
+```ts
+parseFixedLine("01 234 5678").value.nsn;       // "2012345678"
+parseFixedLine("01 234 5678").value.upgraded;  // true
+```
+
+`area` is populated only for codes with a live allocation in the [NCC National Numbering Plan
+(Oct 2022)](https://ncc.gov.ng/sites/default/files/2024-11/Standards-National_Numbering_Plan_202210.pdf) —
+29 areas. A valid-shaped number in a historic code with no current allottee (Sokoto `060`, Akure
+`034`) parses fine and reports no `area`, the same way `parsePhone` treats `originalOperator`.
+
+Mobile and fixed-line never overlap: a landline NSN starts with `2`, and `isPhone` requires 7, 8 or 9.
+
 ### Tax ID (13 digits) — and the legacy TIN
 
 Nigeria replaced TIN with a unified **Tax ID** under the Nigeria Tax Administration Act 2025; the

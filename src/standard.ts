@@ -1,5 +1,6 @@
 import { type CacValue, parseCac } from "./cac.js";
 import { type DriverLicense, parseDriverLicense } from "./driver-license.js";
+import { type NgFixedLine, parseFixedLine } from "./fixed-line.js";
 import { type NationalId, parseBvn, parseNin } from "./national-id.js";
 import { type Nuban, parseNuban } from "./nuban.js";
 import { type Passport, parsePassport } from "./passport.js";
@@ -36,6 +37,7 @@ const schema = <T>(parse: (input: string) => Result<T>): StandardSchemaV1<string
 });
 
 export const ngPhone = (): StandardSchemaV1<string, NgPhone> => schema(parsePhone);
+export const fixedLine = (): StandardSchemaV1<string, NgFixedLine> => schema(parseFixedLine);
 export const nin = (): StandardSchemaV1<string, NationalId> => schema(parseNin);
 export const bvn = (): StandardSchemaV1<string, NationalId> => schema(parseBvn);
 export const cac = (): StandardSchemaV1<string, CacValue> => schema(parseCac);
