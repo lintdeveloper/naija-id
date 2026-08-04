@@ -15,4 +15,6 @@ Four changes:
 
 Kept in the README rather than moved to a separate file so no link can rot and nothing depends on a doc that might not be published.
 
-Rendered default view drops from ~437 to ~307 lines. All 17 TypeScript snippets were extracted and compiled against the project's own tsc.
+**437 → 226 lines**, with the rendered default view at ~198. Prose that explained *why* now links to `docs/design-decisions.md` instead of repeating it, so the README carries what you need to call the API and one line of caveat per identifier — the reasoning is one click away rather than in the scroll path.
+
+Per-identifier caveats became a table rather than six prose blocks. Every snippet was extracted and compiled against the project's own tsc, every claimed output was executed and checked, and all 9 internal and cross-file anchors were verified against real headings.
