@@ -11,6 +11,7 @@ import { formatRsaPin, isRsaPin } from "./rsa-pin.ts";
 import { formatTaxId, isTaxId } from "./tax-id.ts";
 import { formatTin, isTin } from "./tin.ts";
 import { formatVnin, isVnin } from "./vnin.ts";
+import { formatVoterVin, isVoterVin } from "./voter-vin.ts";
 
 /**
  * The formatter contract, enforced uniformly over every identifier and style: a messy-but-valid
@@ -137,6 +138,13 @@ const CASES: ReadonlyArray<{
     isValid: isVnin,
     input: "JZ426633988976CH",
     expected: "JZ-4266-3398-8976-CH",
+  },
+  {
+    label: "voter-vin",
+    format: formatVoterVin,
+    isValid: isVoterVin,
+    input: "90a5-ab07-9729-3845-330",
+    expected: "90A5AB0797293845330",
   },
   {
     label: "plate/dash (default)",

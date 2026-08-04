@@ -149,6 +149,23 @@ export function generateDriverLicense(opts: { rng?: Rng } = {}): string {
 }
 
 /**
+ * Generate a **synthetic** INEC voter VIN: 19 hexadecimal characters.
+ *
+ * Emits hex on purpose, even though {@link isVoterVin} accepts any uppercase alphanumeric. Every
+ * letter observed in real provider samples falls in `A`–`F`, so hex fixtures look realistic — while
+ * the validator stays loose so it cannot false-reject a real card. Generate conservatively, validate
+ * permissively.
+ *
+ * ⚠️ Test data only. The VIN has no checksum and no reserved test range, so a generated value **may
+ * coincide with a real voter's** — never use it against production/real systems.
+ */
+export function generateVoterVin(opts: { rng?: Rng } = {}): string {
+  const rng = opts.rng ?? Math.random;
+  const HEX = "0123456789ABCDEF";
+  return Array.from({ length: 19 }, () => HEX.charAt(Math.floor(unit(rng) * HEX.length))).join("");
+}
+
+/**
  * Generate a **synthetic** Nigerian fixed-line number in E.164 form, e.g. `+2342012345678`.
  * `areaCode` accepts either the post-2023 form (`201`) or the pre-2023 one (`01`); it defaults to a
  * random allocated area. Throws if the code is not one this library knows.

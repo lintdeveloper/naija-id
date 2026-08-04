@@ -11,6 +11,7 @@ import { isRsaPin } from "./rsa-pin.ts";
 import { isTaxId } from "./tax-id.ts";
 import { isTin } from "./tin.ts";
 import { isVnin } from "./vnin.ts";
+import { isVoterVin } from "./voter-vin.ts";
 
 /**
  * Zod schemas for Nigerian identifiers (subpath: `naija-id/zod`). Requires `zod` as a peer
@@ -27,6 +28,9 @@ export const tin = () => z.string().refine(isTin, "Invalid TIN");
 /** 13-digit NRS Tax ID. Legacy TINs are still valid — use `z.union([taxId(), tin()])` to accept either. */
 export const taxId = () => z.string().refine(isTaxId, "Invalid Tax ID — expected 13 digits");
 export const vnin = () => z.string().refine(isVnin, "Invalid vNIN");
+/** INEC voter VIN — structural only; see `parseVoterVin`. */
+export const voterVin = () =>
+  z.string().refine(isVoterVin, "Invalid voter VIN — expected 19 letters or digits");
 export const nuban = (bankCode: string) =>
   z.string().refine((value) => isValidNuban(value, bankCode), "Invalid NUBAN for the given bank");
 export const plate = () => z.string().refine(isPlate, "Invalid Nigerian plate number");

@@ -9,6 +9,7 @@ import { isRsaPin } from "./rsa-pin.ts";
 import { isTaxId } from "./tax-id.ts";
 import { isTin } from "./tin.ts";
 import { isVnin } from "./vnin.ts";
+import { isVoterVin } from "./voter-vin.ts";
 
 export type NaijaIdType =
   | "phone"
@@ -22,6 +23,7 @@ export type NaijaIdType =
   | "passport"
   | "driver-license"
   | "rsa-pin"
+  | "voter-vin"
   | "unknown";
 
 /**
@@ -37,6 +39,8 @@ export function detect(input: string): NaijaIdType {
   if (isPhone(input)) return "phone";
   if (isRsaPin(input)) return "rsa-pin";
   if (isVnin(input)) return "vnin";
+  // 19 chars exactly, so disjoint from every other shape here.
+  if (isVoterVin(input)) return "voter-vin";
   if (isPlate(input)) return "plate";
   if (isDriverLicense(input)) return "driver-license";
   if (isTin(input)) return "tin";
