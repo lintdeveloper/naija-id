@@ -23,3 +23,17 @@ export function parseRsaPin(input: string): Result<RsaPin> {
 }
 
 export const isRsaPin = (input: string): boolean => parseRsaPin(input).valid;
+
+export type RsaPinFormat = "plain" | "grouped";
+
+/**
+ * Format an RSA PIN. `plain` is the canonical form (`PEN123456789012`) and the default; `grouped`
+ * breaks the serial into fours for readability (`PEN 1234 5678 9012`). `null` when invalid.
+ */
+export function formatRsaPin(input: string, style: RsaPinFormat = "plain"): string | null {
+  const result = parseRsaPin(input);
+  if (!result.valid) return null;
+  const { serial } = result.value;
+  if (style === "plain") return `PEN${serial}`;
+  return `PEN ${serial.slice(0, 4)} ${serial.slice(4, 8)} ${serial.slice(8)}`;
+}

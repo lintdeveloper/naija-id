@@ -22,3 +22,12 @@ export function parseDriverLicense(input: string): Result<DriverLicense> {
 }
 
 export const isDriverLicense = (input: string): boolean => parseDriverLicense(input).valid;
+
+/**
+ * Canonical driver's licence form: uppercased with separators stripped. `null` when the input is
+ * not a valid licence number. The FRSC publishes no display grouping, so none is invented here.
+ */
+export function formatDriverLicense(input: string): string | null {
+  const result = parseDriverLicense(input);
+  return result.valid ? result.value.normalized : null;
+}

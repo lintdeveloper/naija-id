@@ -27,3 +27,12 @@ export function parsePassport(input: string): Result<Passport> {
 }
 
 export const isPassport = (input: string): boolean => parsePassport(input).valid;
+
+/**
+ * Canonical passport number form: 9 characters, uppercased with whitespace stripped. `null` when
+ * the input is not a valid passport number. Passport numbers have no display grouping.
+ */
+export function formatPassport(input: string): string | null {
+  const result = parsePassport(input);
+  return result.valid ? result.value.normalized : null;
+}

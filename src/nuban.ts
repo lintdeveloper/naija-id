@@ -49,3 +49,25 @@ export function parseNuban(accountNumber: string, bankCode: string): Result<Nuba
 export function isValidNuban(accountNumber: string, bankCode: string): boolean {
   return parseNuban(accountNumber, bankCode).valid;
 }
+
+export type NubanFormat = "plain" | "grouped";
+
+/**
+ * Format an account number, validating it against the bank code first — so this takes the same
+ * arguments as {@link parseNuban}, not just the account number. `plain` is the canonical 10 digits
+ * and the default; `grouped` gives `0123 456 789`.
+ *
+ * Returns `null` when the account number is not a valid NUBAN for that bank code. NUBAN has no
+ * official display grouping; `grouped` is a readability convenience.
+ */
+export function formatNuban(
+  accountNumber: string,
+  bankCode: string,
+  style: NubanFormat = "plain",
+): string | null {
+  const result = parseNuban(accountNumber, bankCode);
+  if (!result.valid) return null;
+  const value = result.value.accountNumber;
+  if (style === "plain") return value;
+  return `${value.slice(0, 4)} ${value.slice(4, 7)} ${value.slice(7)}`;
+}

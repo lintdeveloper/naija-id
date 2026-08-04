@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { isValidNuban, nubanCheckDigit, parseNuban } from "./nuban.js";
+import { formatNuban, isValidNuban, nubanCheckDigit, parseNuban } from "./nuban.js";
 
 describe("nuban", () => {
   it("computes the CBN check digit (3-digit legacy code)", () => {
@@ -32,5 +32,17 @@ describe("nuban", () => {
     expect(parseNuban("12345", "011").valid).toBe(false); // wrong length
     expect(parseNuban("123456789a", "011").valid).toBe(false); // non-digit
     expect(parseNuban("0000000017", "01").valid).toBe(false); // bad bank-code length
+  });
+
+  it("formats only when the account number is valid for the bank code", () => {
+    // Unlike every other formatter, this one validates against a second argument — the same
+    // account number can format for one bank and be rejected for another.
+    expect(formatNuban("0000000017", "011")).toBe("0000000017");
+    expect(formatNuban("0000000017", "011", "grouped")).toBe("0000 000 017");
+    expect(formatNuban("0000000012", "000016")).toBe("0000000012");
+
+    expect(formatNuban("0000000017", "000016")).toBeNull(); // valid for 011, not for 000016
+    expect(formatNuban("0000000010", "011")).toBeNull(); // check digit mismatch
+    expect(formatNuban("0000000017", "01")).toBeNull(); // malformed bank code
   });
 });

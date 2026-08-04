@@ -26,3 +26,12 @@ export function parseTin(input: string): Result<TinValue> {
 }
 
 export const isTin = (input: string): boolean => parseTin(input).valid;
+
+/**
+ * Canonical TIN form for whichever legacy scheme it belongs to — FIRS stays `NNNNNNNN-NNNN`, JTB
+ * stays 10 digits. `null` when the input is not a valid TIN.
+ */
+export function formatTin(input: string): string | null {
+  const result = parseTin(input);
+  return result.valid ? result.value.normalized : null;
+}
