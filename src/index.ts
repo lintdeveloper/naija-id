@@ -10,6 +10,8 @@ export {
 export { isBvn, isNin, parseBvn, parseNin, type NationalId } from "./national-id.js";
 export { type CacKind, type CacValue, isCac, parseCac } from "./cac.js";
 export { isTin, parseTin, type TinScheme, type TinValue } from "./tin.js";
+export { formatTaxId, isTaxId, parseTaxId, type TaxId } from "./tax-id.js";
+export { formatVnin, isVnin, parseVnin, type Vnin, type VninFormat } from "./vnin.js";
 export { detect, type NaijaIdType } from "./detect.js";
 export { type Plate, isPlate, parsePlate } from "./plate.js";
 export { type Passport, isPassport, parsePassport } from "./passport.js";
@@ -18,5 +20,13 @@ export { type RsaPin, isRsaPin, parseRsaPin } from "./rsa-pin.js";
 export { isValidNuban, nubanCheckDigit, parseNuban, type Nuban } from "./nuban.js";
 export { type Bank, BANKS, findBank, getBank } from "./data/banks.js";
 export { type NgOperator, OPERATOR_PREFIXES } from "./data/operators.js";
-export { generateBvn, generateNin, generateNuban, generatePhone, type Rng } from "./generate.js";
+export {
+  generateBvn,
+  generateNin,
+  generateNuban,
+  generatePhone,
+  generateTaxId,
+  generateVnin,
+  type Rng,
+} from "./generate.js";
 export { mask } from "./mask.js";

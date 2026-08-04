@@ -10,7 +10,9 @@ import {
   passport,
   plate,
   rsaPin,
+  taxId,
   tin,
+  vnin,
 } from "./standard.js";
 
 function validateSync<T>(
@@ -24,7 +26,20 @@ function validateSync<T>(
 
 describe("standard schema", () => {
   it("exposes the ~standard interface on every factory", () => {
-    for (const make of [bvn, cac, tin, passport, driverLicense, rsaPin, nin, ngPhone, plate]) {
+    const factories = [
+      bvn,
+      cac,
+      tin,
+      taxId,
+      vnin,
+      passport,
+      driverLicense,
+      rsaPin,
+      nin,
+      ngPhone,
+      plate,
+    ];
+    for (const make of factories) {
       const s = make();
       expect(s["~standard"].version).toBe(1);
       expect(s["~standard"].vendor).toBe("naija-id");
@@ -38,6 +53,12 @@ describe("standard schema", () => {
 
     const p = validateSync(plate(), "abc-123-de");
     if ("value" in p) expect(p.value.normalized).toBe("ABC123DE");
+
+    const v = validateSync(vnin(), "ab-0123-4567-8910-yz");
+    if ("value" in v) expect(v.value.normalized).toBe("AB012345678910YZ");
+
+    const t = validateSync(taxId(), "1234 5678 90123");
+    if ("value" in t) expect(t.value.normalized).toBe("1234567890123");
   });
 
   it("returns issues on failure and for non-strings", () => {

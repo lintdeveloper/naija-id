@@ -5,13 +5,17 @@ import { isPassport } from "./passport.js";
 import { isPhone } from "./phone.js";
 import { isPlate } from "./plate.js";
 import { isRsaPin } from "./rsa-pin.js";
+import { isTaxId } from "./tax-id.js";
 import { isTin } from "./tin.js";
+import { isVnin } from "./vnin.js";
 
 export type NaijaIdType =
   | "phone"
   | "nin-or-bvn"
+  | "vnin"
   | "cac"
   | "tin"
+  | "tax-id"
   | "plate"
   | "passport"
   | "driver-license"
@@ -23,14 +27,19 @@ export type NaijaIdType =
  * (both 11 digits); bare numbers can be ambiguous with CAC; and a CAC like `RC1234567` also fits
  * the 2-letter passport shape, so CAC/TIN/NIN are matched before the more generic passport check.
  * Treat the result as a hint.
+ *
+ * The digit-only identifiers are disjoint by length — JTB TIN 10, NIN/BVN 11, Tax ID 13 — but all
+ * stay ahead of `isCac`, which accepts a bare 1–10 digits.
  */
 export function detect(input: string): NaijaIdType {
   if (isPhone(input)) return "phone";
   if (isRsaPin(input)) return "rsa-pin";
+  if (isVnin(input)) return "vnin";
   if (isPlate(input)) return "plate";
   if (isDriverLicense(input)) return "driver-license";
   if (isTin(input)) return "tin";
   if (isNin(input)) return "nin-or-bvn";
+  if (isTaxId(input)) return "tax-id";
   if (isCac(input)) return "cac";
   if (isPassport(input)) return "passport";
   return "unknown";

@@ -21,6 +21,12 @@ const digits = (n: number, rng: Rng): string =>
   Array.from({ length: n }, () => digit(rng)).join("");
 const pick = <T>(pool: readonly T[], rng: Rng): T => pool[Math.floor(unit(rng) * pool.length)] as T;
 
+const ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+const letters = (n: number, rng: Rng): string =>
+  Array.from({ length: n }, () => ALPHABET.charAt(Math.floor(unit(rng) * ALPHABET.length))).join(
+    "",
+  );
+
 const ALL_PREFIXES = Object.values(OPERATOR_PREFIXES).flat();
 
 /**
@@ -40,6 +46,27 @@ export function generateNin(opts: { rng?: Rng } = {}): string {
  */
 export function generateBvn(opts: { rng?: Rng } = {}): string {
   return digits(11, opts.rng ?? Math.random);
+}
+
+/**
+ * Generate a **synthetic** 13-digit NRS Tax ID.
+ *
+ * ⚠️ Test data only. The Tax ID has no checksum and no reserved test range, so a generated value
+ * **may coincide with a real taxpayer's** — never use it against production/real systems.
+ */
+export function generateTaxId(opts: { rng?: Rng } = {}): string {
+  return digits(13, opts.rng ?? Math.random);
+}
+
+/**
+ * Generate a **synthetic** vNIN (2 letters + 12 digits + 2 letters).
+ *
+ * ⚠️ Test data only. Note that real vNINs are enterprise-scoped and expire after 72 hours, so a
+ * generated one is structurally valid but can never verify against NIMC.
+ */
+export function generateVnin(opts: { rng?: Rng } = {}): string {
+  const rng = opts.rng ?? Math.random;
+  return `${letters(2, rng)}${digits(12, rng)}${letters(2, rng)}`;
 }
 
 /**
@@ -69,7 +96,9 @@ export function generatePhone(
 ): string {
   const rng = opts.rng ?? Math.random;
   const pool = opts.operator ? OPERATOR_PREFIXES[opts.operator] : ALL_PREFIXES;
-  const local = `${pick(pool, rng)}${digits(7, rng)}`;
+  // Blocks are 4 or 5 digits wide (MTN's ex-Visafone 07025/07026); pad to an 11-digit local number.
+  const prefix = pick(pool, rng);
+  const local = `${prefix}${digits(11 - prefix.length, rng)}`;
   const formatted = formatPhone(local, opts.format ?? "e164");
   if (formatted === null) {
     // Unreachable while every prefix is a well-formed mobile prefix; guards against bad data.

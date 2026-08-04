@@ -10,7 +10,9 @@ import {
   passport,
   plate,
   rsaPin,
+  taxId,
   tin,
+  vnin,
 } from "./zod.js";
 
 describe("zod schemas", () => {
@@ -25,6 +27,8 @@ describe("zod schemas", () => {
       passport: passport(),
       driverLicense: driverLicense(),
       rsaPin: rsaPin(),
+      taxId: taxId(),
+      vnin: vnin(),
     });
     const parsed = schema.safeParse({
       phone: "08031234567",
@@ -36,8 +40,17 @@ describe("zod schemas", () => {
       passport: "A10000001",
       driverLicense: "FN63483AT78",
       rsaPin: "PEN123456789012",
+      taxId: "1234567890123",
+      vnin: "JZ426633988976CH",
     });
     expect(parsed.success).toBe(true);
+  });
+
+  it("accepts either a Tax ID or a legacy TIN via a union", () => {
+    const either = z.union([taxId(), tin()]);
+    expect(either.safeParse("1234567890123").success).toBe(true);
+    expect(either.safeParse("12345678-0001").success).toBe(true);
+    expect(either.safeParse("123").success).toBe(false);
   });
 
   it("rejects invalid values", () => {
@@ -46,6 +59,8 @@ describe("zod schemas", () => {
     expect(cac().safeParse("!!!").success).toBe(false);
     expect(plate().safeParse("AB12").success).toBe(false);
     expect(rsaPin().safeParse("PEN1").success).toBe(false);
+    expect(taxId().safeParse("1234567890").success).toBe(false);
+    expect(vnin().safeParse("JZ42663398CH").success).toBe(false);
   });
 
   it("validates NUBAN against a bank code", () => {
