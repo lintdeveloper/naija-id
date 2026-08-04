@@ -27,4 +27,9 @@ Default types are the kinds whose written form carries evidence beyond its lengt
 
 Options: `types`, `bareDigits`, `context`, `keys`, `exclude`, `bankCodes`, plus `reveal`/`maskChar` forwarded to `mask()`.
 
+**Ships as the `naija-id/redact` subpath, not from the main entry.** Redaction is about two thirds of the library's code, and while an ESM consumer tree-shakes it away, a CJS `require("naija-id")` cannot — the main entry would have grown 6.4 kB → 23.2 kB for everyone. This matches the existing `naija-id/zod` and `naija-id/standard` precedent.
+
+**Behaviour change to `mask()`:** it now fails **closed** on a non-finite `reveal`. Previously `mask(value, { reveal: NaN })` — which is what `Number(process.env.REVEAL)` yields when the variable is unset — disabled masking entirely and returned the plaintext. It now masks everything. This affects `mask()` directly as well as every redaction call that forwards `reveal`.
+
+
 The README documents the misses as prominently as the features — unlabelled bare digit runs, NUBAN without a bank code, glued digit runs, non-ASCII digits, non-English labels, and key names outside the built-in table.

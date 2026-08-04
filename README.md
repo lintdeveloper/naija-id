@@ -21,7 +21,9 @@ type, an optional **Zod** integration and zero-dependency **Standard Schema** su
 npm i naija-id
 ```
 
-ESM and CommonJS are both supported. The `naija-id/zod` subpath needs `zod` (a peer dependency).
+ESM and CommonJS are both supported. Three subpaths keep optional weight out of the main entry:
+`naija-id/zod` (needs `zod`, a peer dependency), `naija-id/standard` (zero-dependency Standard
+Schema) and `naija-id/redact` (PII redaction).
 
 ## Usage
 
@@ -204,8 +206,11 @@ mask("12345678-0001");              // "********-*001"  (separators preserved)
 `mask()` handles one value you already know is sensitive. `redactText` and `redact` find Nigerian
 identifiers inside free text and objects:
 
+Redaction lives at its own subpath. It is roughly two thirds of the library's code, so keeping it
+out of the main entry means a `require("naija-id")` that only validates stays small:
+
 ```ts
-import { redactText, redact, scanText } from "naija-id";
+import { redactText, redact, scanText } from "naija-id/redact";
 
 redactText("Call 0803 123 4567 about plate ABC-123DE");
 // "Call **** *** *567 about plate ***-**3DE"
