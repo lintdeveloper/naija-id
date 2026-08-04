@@ -129,6 +129,33 @@ isDriverLicense("FN63483AT78"); // true  (structural — FRSC shape)
 Passport and driver's licence are **structural** checks only (shape, not existence) — their formats
 aren't publicly standardised, so a pass is a hint, not verification.
 
+### Format for display
+
+Every identifier has a `format*` counterpart to its `parse*`/`is*` pair. Each one validates first
+and returns `null` for invalid input — it never throws — so it doubles as a
+"normalize or reject" helper:
+
+```ts
+import { formatCac, formatPlate, formatRsaPin, formatNuban, formatNin } from "naija-id";
+
+formatNin("123 456 789 01");                  // "12345678901"  (normalizes)
+formatNin("nope");                            // null
+formatPlate("abc123de");                      // "ABC-123DE"    (dash is the plate convention)
+formatPlate("abc123de", "plain");             // "ABC123DE"
+formatCac("rc1234567", "dash");               // "RC-1234567"
+formatRsaPin("PEN123456789012", "grouped");   // "PEN 1234 5678 9012"
+formatNuban("0000000017", "011", "grouped");  // "0000 000 017"
+```
+
+Formatting never breaks validation — `isX(formatX(value))` holds for every style. Defaults are the
+canonical machine form (so `formatCac` gives `RC1234567`), except **plate**, which defaults to the
+dashed form actually written on plates.
+
+`formatNuban` is the one exception to the single-argument shape: it takes the same
+`(accountNumber, bankCode)` as `parseNuban`, since a NUBAN can only be validated against a bank
+code. Identifiers with no published display grouping (NIN, BVN, passport, driver's licence, Tax ID)
+take no style argument — reach for `mask()` when you need a display-safe rendering instead.
+
 ### Generate test data
 
 > ⚠️ **Synthetic — for tests, seeds and demos only.** Generated values are format-valid but **not

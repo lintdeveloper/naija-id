@@ -33,3 +33,16 @@ export function parsePlate(input: string): Result<Plate> {
 }
 
 export const isPlate = (input: string): boolean => parsePlate(input).valid;
+
+export type PlateFormat = "dash" | "plain";
+
+/**
+ * Format a plate number. `dash` is how plates are actually written (`ABC-123DE`) and is the
+ * default; `plain` is the canonical separator-free form (`ABC123DE`). `null` when invalid.
+ */
+export function formatPlate(input: string, style: PlateFormat = "dash"): string | null {
+  const result = parsePlate(input);
+  if (!result.valid) return null;
+  const { lga, serial, suffix } = result.value;
+  return style === "dash" ? `${lga}-${serial}${suffix}` : `${lga}${serial}${suffix}`;
+}

@@ -22,3 +22,21 @@ export function parseCac(input: string): Result<CacValue> {
 }
 
 export const isCac = (input: string): boolean => parseCac(input).valid;
+
+export type CacFormat = "plain" | "dash" | "spaced";
+
+/**
+ * Format a CAC registration number. `plain` is the canonical form (`RC1234567`) and the default;
+ * `dash` gives `RC-1234567` and `spaced` gives `RC 1234567`. `null` when the input is invalid.
+ *
+ * A registration number with no RC/BN/IT/LP prefix has nothing to separate, so every style returns
+ * the bare digits for those.
+ */
+export function formatCac(input: string, style: CacFormat = "plain"): string | null {
+  const result = parseCac(input);
+  if (!result.valid) return null;
+  const { kind, number } = result.value;
+  if (kind === undefined) return number;
+  const separator = style === "dash" ? "-" : style === "spaced" ? " " : "";
+  return `${kind}${separator}${number}`;
+}

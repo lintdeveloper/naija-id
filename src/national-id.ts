@@ -21,3 +21,20 @@ export const parseBvn = (input: string): Result<NationalId> => parseEleven(input
 
 export const isNin = (input: string): boolean => parseNin(input).valid;
 export const isBvn = (input: string): boolean => parseBvn(input).valid;
+
+/**
+ * Canonical NIN form: the plain 11 digits. `null` when the input is not a valid NIN.
+ *
+ * There is no official display grouping for a NIN, so none is invented here — use `mask()` when
+ * you need a display-safe rendering.
+ */
+export function formatNin(input: string): string | null {
+  const result = parseNin(input);
+  return result.valid ? result.value.value : null;
+}
+
+/** Canonical BVN form: the plain 11 digits. `null` when the input is not a valid BVN. */
+export function formatBvn(input: string): string | null {
+  const result = parseBvn(input);
+  return result.valid ? result.value.value : null;
+}
