@@ -551,6 +551,62 @@ describe("redact — regressions", () => {
   });
 });
 
+describe("redactText — label vocabulary", () => {
+  it("reads the dictionary-verified Hausa and Igbo phone terms", () => {
+    for (const line of [
+      "lambar waya 8031234567",
+      "lambar wayar hannu 8031234567",
+      "waya 8031234567",
+      "nọmba ekwentị 8031234567",
+      "nomba ekwenti 8031234567", // diacritics are routinely dropped when typing
+    ]) {
+      expect(redactText(line), line).toContain("*******567");
+    }
+  });
+
+  it("still refuses the bare words that merely mean 'number'", () => {
+    // Hausa `lamba` / Igbo `nọmba` alone carry the same genericity problem as English "number".
+    for (const line of ["lamba 8031234567", "nomba 8031234567", "tracking number 1234567678"]) {
+      expect(redactText(line), line).toBe(line);
+    }
+  });
+
+  it("accepts a caller-supplied vocabulary without replacing the built-ins", () => {
+    // Yoruba is deliberately not built in — unverified — so this is the supported route.
+    const labels = { phone: ["fóònù"], "nin-or-bvn": ["identity no"] } as const;
+    expect(redactText("fóònù 8031234567", { labels })).toContain("*");
+    expect(redactText("identity no 12345678901", { labels })).toContain("*");
+    expect(redactText("NIN 12345678901", { labels })).toBe("NIN ********901");
+  });
+
+  it("normalizes caller terms the same way it normalizes the window", () => {
+    // A dotted term must not be collapsed out of existence by the initialism rule, and a camelCase
+    // term must match the split window.
+    expect(redactText("a.c 12345678901", { labels: { "nin-or-bvn": ["a.c"] } })).toContain("*");
+    expect(
+      redactText("idNumber 12345678901", { labels: { "nin-or-bvn": ["idNumber"] } }),
+    ).toContain("*");
+    expect(
+      redactText("id number 12345678901", { labels: { "nin-or-bvn": ["idNumber"] } }),
+    ).toContain("*");
+  });
+
+  it("escapes caller terms rather than interpreting them as patterns", () => {
+    expect(redactText("abc 12345678901", { labels: { "nin-or-bvn": ["a.c"] } })).toBe(
+      "abc 12345678901",
+    );
+    expect(() =>
+      redactText("x 12345678901", { labels: { "nin-or-bvn": ["(unclosed", "a{2,", "[z-a]"] } }),
+    ).not.toThrow();
+  });
+
+  it("ignores empty and whitespace-only terms", () => {
+    expect(redactText("x 12345678901", { labels: { "nin-or-bvn": ["", "   "] } })).toBe(
+      "x 12345678901",
+    );
+  });
+});
+
 describe("redact — configuration surface", () => {
   it("forwards maskChar and reveal to mask()", () => {
     expect(redactText("Plate ABC-123DE", { reveal: 0, maskChar: "#" })).toBe("Plate ###-#####");

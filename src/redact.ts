@@ -73,6 +73,28 @@ export interface RedactOptions {
    */
   context?: boolean;
   /**
+   * Extra label words per identifier kind, added to the built-in vocabulary for this call.
+   *
+   * The built-in list is English plus dictionary-verified Hausa and Igbo phone terms. It cannot
+   * anticipate your schema's wording, a language it does not cover, or an internal abbreviation —
+   * and a label it does not recognise is a **silent miss**, not an error. This is the supported way
+   * to close that gap:
+   *
+   * ```ts
+   * redactText(line, {
+   *   labels: {
+   *     "nin-or-bvn": ["identity no", "id number", "nọmba ìdánimọ̀"],
+   *     phone: ["fóònù", "line id"],
+   *   },
+   * });
+   * ```
+   *
+   * Terms are matched case-insensitively on whole words, and are regex-escaped — pass plain words,
+   * not patterns. A term that is a common English substring (`"no"`, `"id"`) will over-mask; prefer
+   * a qualified phrase.
+   */
+  labels?: Partial<Record<RedactType, readonly string[]>>;
+  /**
    * Object keys whose values are masked wholesale by `redact()`, regardless of shape or validity.
    * A caller naming a key has overridden our judgement on purpose. Matched as a token subsequence,
    * so `"nin"` matches `customer_nin` and `customerNIN`.
@@ -156,6 +178,9 @@ const label = (words: string): RegExp => new RegExp(`(?<![a-z0-9])(?:${words})(?
 
 const LABEL_REACH = 40;
 
+/** Regex-escape a caller-supplied label term — `opts.labels` takes plain words, not patterns. */
+const escapeLabel = (word: string): string => word.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+
 /**
  * Prepare a window for label matching.
  *
@@ -219,6 +244,8 @@ interface Recognizer {
   source: string;
   /** May the span contain ` ` or `-` separators? If so they must be uniform within one span. */
   join: boolean;
+  /** Raw alternation source, kept so `opts.labels` additions can be compiled in per call. */
+  labelWords: string;
   labels: RegExp;
   validate: (span: string, bankCodes: readonly string[]) => boolean;
   invalidate?: (span: string) => boolean;
@@ -229,10 +256,30 @@ interface Recognizer {
  * number" are all far more common in logs than "number" meaning a phone. They only count when
  * qualified.
  */
-const PHONE_LABELS = label(
-  "phone|msisdn|mobile|tel|telephone|gsm|whatsapp|cell|(?:contact|cell|mobile|phone|gsm|line)[ -]?(?:number|no)",
-);
-const NIN_LABELS = label("nin|bvn");
+/**
+ * Phone label vocabulary.
+ *
+ * A bare "number"/"no" is NOT a label — "tracking number", "invoice number" and "serial number" are
+ * all far more common in logs than "number" meaning a phone — so they only count when qualified.
+ *
+ * The Hausa and Igbo terms are dictionary-sourced (Glosbe: `lambar waya` / `lambar wayar hannu` =
+ * phone number, `waya` = phone; `nọmba ekwentị` = phone number). Both dotted and undotted spellings
+ * are accepted, since diacritics are routinely dropped when typing. Hausa `lamba`/Igbo `nọmba` alone
+ * are NOT included: they simply mean "number" and carry exactly the genericity problem that
+ * disqualified the English word.
+ *
+ * Yoruba is deliberately absent — I could not verify its phone vocabulary from a source I trust, and
+ * guessing here produces silent misses that look like coverage. Use `opts.labels` to add it.
+ */
+const PHONE_WORDS =
+  "phone|msisdn|mobile|tel|telephone|gsm|whatsapp|cell" +
+  "|(?:contact|cell|mobile|phone|gsm|line)[ -]?(?:number|no)" +
+  "|waya|ekwent[i\u1ECB]" +
+  "|lambar[ -]?(?:waya|wayar[ -]?hannu)" +
+  "|n[o\u1ECD]mba[ -]?ekwent[i\u1ECB]";
+const PHONE_LABELS = label(PHONE_WORDS);
+const NIN_WORDS = "nin|bvn";
+const NIN_LABELS = label(NIN_WORDS);
 
 /**
  * Ordered most-specific-first, mirroring `detect()`'s chain — the order breaks ties in overlap
@@ -248,6 +295,7 @@ const RECOGNIZERS: readonly Recognizer[] = [
     kind: "digit",
     source: `(?:\\+?234${SEP}?|0)\\d{3}${SEP}?\\d{3}${SEP}?\\d{4}`,
     join: true,
+    labelWords: PHONE_WORDS,
     labels: PHONE_LABELS,
     validate: (s) => isPhone(s),
   },
@@ -257,6 +305,7 @@ const RECOGNIZERS: readonly Recognizer[] = [
     kind: "alnum",
     source: `PEN${SEP}?\\d{4}${SEP}?\\d{4}${SEP}?\\d{4}`,
     join: true,
+    labelWords: "rsa|pen|pencom|pin",
     labels: label("rsa|pen|pencom|pin"),
     validate: (s) => isRsaPin(s),
   },
@@ -266,6 +315,7 @@ const RECOGNIZERS: readonly Recognizer[] = [
     kind: "alnum",
     source: `[A-Z]{2}${SEP}?\\d{4}${SEP}?\\d{4}${SEP}?\\d{4}${SEP}?[A-Z]{2}`,
     join: true,
+    labelWords: "vnin|virtual nin|token",
     labels: label("vnin|virtual nin|token"),
     validate: (s) => isVnin(s),
   },
@@ -275,6 +325,7 @@ const RECOGNIZERS: readonly Recognizer[] = [
     kind: "alnum",
     source: "[A-Z]{3}-?\\d{3}[A-Z]{2}",
     join: true,
+    labelWords: "plate|vehicle|reg|registration",
     labels: label("plate|vehicle|reg|registration"),
     validate: (s) => isPlate(s),
     invalidate: (s) => UNIT_SUFFIXES.has(s.slice(-2).toUpperCase()),
@@ -285,6 +336,7 @@ const RECOGNIZERS: readonly Recognizer[] = [
     kind: "alnum",
     source: "[A-Z]{2,3}\\d{5}[A-Z]{2}\\d{2}",
     join: false,
+    labelWords: "licence|license|dl|frsc|driver",
     labels: label("licence|license|dl|frsc|driver"),
     validate: (s) => isDriverLicense(s),
   },
@@ -294,6 +346,7 @@ const RECOGNIZERS: readonly Recognizer[] = [
     kind: "alnum",
     source: `(?:RC|BN|IT|LP)${SEP}?\\d{1,10}`,
     join: true,
+    labelWords: "cac|rc|registration",
     labels: label("cac|rc|registration"),
     validate: (s) => isCac(s),
   },
@@ -304,6 +357,7 @@ const RECOGNIZERS: readonly Recognizer[] = [
     // The hyphen is literal shape, not a joinable separator — hence join: false.
     source: "\\d{8}-\\d{4}",
     join: false,
+    labelWords: "tin|tax",
     labels: label("tin|tax"),
     validate: (s) => isTin(s),
   },
@@ -313,6 +367,7 @@ const RECOGNIZERS: readonly Recognizer[] = [
     kind: "alnum",
     source: "[A-Z]\\d{8}|[A-Z]{2}\\d{7}",
     join: false,
+    labelWords: "passport|travel",
     labels: label("passport|travel"),
     validate: (s) => isPassport(s),
     // RC1234567 fits the 2-letter passport shape but is a CAC number.
@@ -324,6 +379,7 @@ const RECOGNIZERS: readonly Recognizer[] = [
     kind: "digit",
     source: "[789]\\d{9}",
     join: false,
+    labelWords: PHONE_WORDS,
     labels: PHONE_LABELS,
     validate: (s) => isPhone(s),
   },
@@ -333,6 +389,7 @@ const RECOGNIZERS: readonly Recognizer[] = [
     kind: "digit",
     source: "\\d{11}",
     join: false,
+    labelWords: NIN_WORDS,
     labels: NIN_LABELS,
     validate: (s) => isNin(s),
   },
@@ -342,6 +399,7 @@ const RECOGNIZERS: readonly Recognizer[] = [
     kind: "digit",
     source: "\\d{13}",
     join: false,
+    labelWords: "tax id|taxid|tax",
     labels: label("tax id|taxid|tax"),
     validate: (s) => isTaxId(s),
   },
@@ -351,6 +409,7 @@ const RECOGNIZERS: readonly Recognizer[] = [
     kind: "digit",
     source: "\\d{10}",
     join: false,
+    labelWords: "tin|jtb",
     labels: label("tin|jtb"),
     validate: (s) => isTin(s),
   },
@@ -361,6 +420,7 @@ const RECOGNIZERS: readonly Recognizer[] = [
     // 4-3-3 grouping is what formatNuban(..., "grouped") emits; parseNuban strips whitespace.
     source: `\\d{4}${SEP}?\\d{3}${SEP}?\\d{3}`,
     join: true,
+    labelWords: "nuban|account|acct",
     labels: label("nuban|account|acct"),
     // Only reachable when the caller supplied bank codes; see RedactOptions.bankCodes.
     validate: (s, bankCodes) => bankCodes.some((code) => isValidNuban(s, code)),
@@ -389,6 +449,22 @@ export function scanText(text: string, opts: RedactOptions = {}): ScanResult {
   if (bankCodes.length > 0) types.add("nuban");
   const bareDigits = opts.bareDigits === true;
   const useContext = opts.context !== false;
+
+  // Compile the caller's extra vocabulary once, merged with each recognizer's built-in words.
+  const labelCache = new Map<RedactType, RegExp>();
+  const labelsFor = (r: Recognizer): RegExp => {
+    const extra = opts.labels?.[r.type];
+    if (extra === undefined || extra.length === 0) return r.labels;
+    const cached = labelCache.get(r.type);
+    if (cached !== undefined) return cached;
+    // Normalize the caller's terms exactly as the window is normalized, so both sides agree: a
+    // dotted term like "B.V.N" is not collapsed out of existence, and a camelCase term like
+    // "idNumber" matches the split window.
+    const terms = extra.map((w) => escapeLabel(labelWindow(w.trim()))).filter((w) => w.length > 0);
+    const compiled = terms.length === 0 ? r.labels : label([r.labelWords, ...terms].join("|"));
+    labelCache.set(r.type, compiled);
+    return compiled;
+  };
 
   const excluded: Array<[number, number]> = [];
   for (const re of opts.exclude ?? []) {
@@ -473,10 +549,8 @@ export function scanText(text: string, opts: RedactOptions = {}): ScanResult {
           : "shape"
         : null;
       if (via === null && useContext) {
-        if (
-          r.labels.test(labelWindowBefore(input, start)) ||
-          hasTrailingLabel(input, end, r.labels)
-        ) {
+        const labels = labelsFor(r);
+        if (labels.test(labelWindowBefore(input, start)) || hasTrailingLabel(input, end, labels)) {
           via = "label";
         }
       }
