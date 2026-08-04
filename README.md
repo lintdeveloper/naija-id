@@ -199,6 +199,73 @@ mask("08031234567", { reveal: 4 }); // "*******4567"
 mask("12345678-0001");              // "********-*001"  (separators preserved)
 ```
 
+### Redact for logs / Sentry
+
+`mask()` handles one value you already know is sensitive. `redactText` and `redact` find Nigerian
+identifiers inside free text and objects:
+
+```ts
+import { redactText, redact, scanText } from "naija-id";
+
+redactText("Call 0803 123 4567 about plate ABC-123DE");
+// "Call **** *** *567 about plate ***-**3DE"
+
+redact({ nin: "12345678901", orderId: "12345678901" });
+// { nin: "********901", orderId: "12345678901" }   ← identical values, opposite outcomes
+
+redact(new Error("BVN 12345678901 not found")).message;
+// "BVN ********901 not found"                       ← message + stack + cause are walked
+```
+
+**Detection is anchored on written shape, not on the validators.** That is not an implementation
+detail — it is the whole design. `isPhone("Total: NGN 8,031,234,567")` is `true`, because `parsePhone`
+strips non-digits before testing. So a validator here can only ever *veto* a candidate the scanner
+already delimited; it can never be used to find one.
+
+Kinds that carry real evidence are on by default: **phone** (in `+234`/`234`/`0` form), **vNIN**,
+**RSA PIN**, **driver's licence**, **plate**. Everything else is opt-in, because it has no shape
+beyond its digit count:
+
+```ts
+redactText("order 12345678901 shipped");                 // unchanged — 11 digits proves nothing
+redactText("NIN 12345678901 verified");                  // "NIN ********901 verified" — label is evidence
+redactText("order 12345678901", {                        // opt in explicitly and accept the cost
+  types: [...DEFAULT_REDACT_TYPES, "nin-or-bvn"], bareDigits: true,
+});                                                      // "order ********901"
+```
+
+#### What it will *not* catch
+
+Read this before putting it in a compliance story. Measured against random same-length tokens,
+30% of 10-digit strings satisfy `isPhone` and *every* 11-, 13- and 10-digit run is a format-valid
+NIN/Tax ID/TIN — so masking them all by default would shred timestamps, order IDs and amounts.
+Consequently these are **missed** unless you opt in:
+
+- unlabelled bare NIN/BVN, Tax ID, JTB TIN, or a bare 10-digit phone NSN
+- **NUBAN, always, unless you pass `bankCodes`.** The 31 NIBSS codes in `BANKS` cover all ten
+  check-digit residues, so *every* 10-digit string validates against at least one of them — brute
+  forcing the dataset is a detector that always says yes. Pass the code you actually know:
+  `redactText(log, { bankCodes: ["058"] })`
+- concatenated digit runs (`08031234567890`), and non-ASCII digits (`０８０３…`, `٠٨٠٣…`)
+- labels in Pidgin, Hausa, Yoruba or Igbo — the label vocabulary is English
+- values under key names the built-in table misses (`custNo`, `ac_no`) — use `keys: ["custNo"]`
+- anything inside a `Date`, `Map`, `Set`, `RegExp` or class instance, which pass through by reference
+
+`scanText` exists so you can size that gap instead of guessing — it reports what it masked *and*
+what it deliberately let through, carrying offsets only, never plaintext:
+
+```ts
+scanText("NIN 12345678901, order 12345678901").skipped;
+// [{ type: "nin-or-bvn", start: 23, end: 34, reason: "type-disabled" }]
+```
+
+Options: `types`, `bareDigits`, `context` (label detection, default on), `keys`, `exclude`,
+`bankCodes`, plus `reveal`/`maskChar` forwarded to `mask()`. Note `reveal` defaults to **3**, so
+three characters stay visible — pass `reveal: 0` for anything you treat as a secret.
+
+`redact` is a **serialization-boundary** function: it never mutates its input and tolerates cycles,
+but a number pulled in by a key name comes back as a string.
+
 ### With Zod
 
 ```ts

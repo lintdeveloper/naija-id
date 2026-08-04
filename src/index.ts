@@ -56,3 +56,15 @@ export {
   type Rng,
 } from "./generate.js";
 export { mask } from "./mask.js";
+export {
+  ALL_REDACT_TYPES,
+  DEFAULT_REDACT_TYPES,
+  redact,
+  redactText,
+  scanText,
+  type RedactMatch,
+  type RedactOptions,
+  type RedactSkip,
+  type RedactType,
+  type ScanResult,
+} from "./redact.js";
