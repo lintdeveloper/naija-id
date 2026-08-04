@@ -189,6 +189,44 @@ isValidNuban(account, bank.legacyCode ?? bank.code); // legacy-era accounts
 `legacyCode` is absent for institutions that never had a CBN clearing code — MFBs/PSBs (Kuda, OPay,
 PalmPay, Moniepoint) and banks licensed after the legacy era.
 
+
+#### Which bank is this account? (`inferBanks`)
+
+Given a bare account number and no bank code, run the check digit backwards against every code in
+`BANKS` — offline:
+
+```ts
+import { inferBanks } from "naija-id";
+
+for (const { bank, code } of inferBanks("0123456785")) {
+  const holder = await nameEnquiry("0123456785", code); // the expensive part
+  if (holder) return { bank, holder };
+}
+```
+
+**It narrows; it does not identify.** The result is never empty and never a single answer, and that's
+arithmetic rather than luck: the weight pattern repeats `[3, 7, 3]` and both legal code lengths are
+multiples of 3, so a bank code contributes only `W(code) mod 10`. The 31 NIBSS codes already cover all
+ten residues, the thinnest holding two — so *every* 10-digit string is a valid NUBAN for at least two
+known banks.
+
+| matches per account | value |
+| --- | --- |
+| mean | 5.1 |
+| minimum | 2 |
+| accounts with none | 0 |
+
+So it's a **~10× shortlist**: a NIBSS name-enquiry sweep drops from 51 paid, rate-limited calls to
+about five. A bank appears once per matching code, so one whose 6-digit *and* 3-digit codes both match
+yields two entries — each a distinct thing to try.
+
+**The order is not a ranking.** Results come out in dataset order, and nothing computable offline says
+which candidate is likelier — so don't read the first entry as the best guess. Narrow further with
+information you already have (the customer's stated bank, a prior transaction) rather than with this
+order.
+
+This is also why `redactText` refuses to detect NUBANs without a bank code: the same fact that makes a
+shortlist useful makes a silent yes/no detector dishonest.
 ### More identifiers
 
 ```ts

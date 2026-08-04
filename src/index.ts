@@ -54,6 +54,7 @@ export {
   type NubanFormat,
 } from "./nuban.ts";
 export { type Bank, BANKS, findBank, getBank } from "./data/banks.ts";
+export { inferBanks, type NubanMatch } from "./infer-banks.ts";
 export { type NgOperator, OPERATOR_PREFIXES } from "./data/operators.ts";
 export {
   generateBvn,
